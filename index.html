@@ -1179,6 +1179,10 @@
         function showCurrentSection() {
             const subtitleEl = document.getElementById('todaySubtitle');
             
+            console.log(`🔍 현재 섹션: ${currentSection}`);
+            console.log(`📊 정책가이드 수: ${allGuides.length}`);
+            console.log(`📱 유심가이드 수: ${allSimGuides.length}`);
+            
             if (currentSection === 'sim') {
                 subtitleEl.textContent = '최신 유심가이드';
                 showSimGuides();
@@ -1523,11 +1527,7 @@
                         .from('guide-images')
                         .remove([fileName]);
                     
-                    if (dbError.code === 'PGRST116') {
-                        showMessage('sim_guides 테이블이 존재하지 않습니다. Supabase에서 테이블을 생성해주세요.', 'error');
-                    } else {
-                        showMessage(`데이터베이스 오류: ${dbError.message}`, 'error');
-                    }
+                    showMessage(`유심가이드 업로드 오류: ${dbError.message}`, 'error');
                     return;
                 }
 
@@ -1897,20 +1897,20 @@
                 
                 console.log('✅ guides 테이블 연결 성공');
 
-                // sim_guides 테이블 확인
-                const { data: simTables, error: simTablesError } = await supabaseClient
-                    .from('sim_guides')
-                    .select('*')
-                    .limit(1);
+                // sim_guides 테이블 확인 (에러가 나도 계속 진행)
+                try {
+                    const { data: simTables, error: simTablesError } = await supabaseClient
+                        .from('sim_guides')
+                        .select('*')
+                        .limit(1);
 
-                if (simTablesError) {
-                    console.error('❌ sim_guides 테이블 확인 오류:', simTablesError);
-                    
-                    if (simTablesError.code === 'PGRST116') {
-                        console.log('📱 sim_guides 테이블이 존재하지 않습니다.');
+                    if (simTablesError) {
+                        console.log('📱 sim_guides 테이블 확인 중 오류 발생, 무시하고 계속 진행');
+                    } else {
+                        console.log('✅ sim_guides 테이블 연결 성공');
                     }
-                } else {
-                    console.log('✅ sim_guides 테이블 연결 성공');
+                } catch (simError) {
+                    console.log('📱 sim_guides 테이블 오류 무시하고 계속 진행');
                 }
                 
                 // Storage 버킷 확인
