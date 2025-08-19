@@ -298,6 +298,92 @@
             gap: 20px;
         }
 
+        /* 도움말 모달 */
+        .help-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .help-modal.active {
+            display: flex;
+        }
+
+        .help-content {
+            background: #0a0a0a;
+            border: 2px solid #1976d2;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .help-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .help-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1976d2;
+        }
+
+        .close-help {
+            background: transparent;
+            border: none;
+            color: #666;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+
+        .close-help:hover {
+            color: #fff;
+        }
+
+        .help-steps {
+            margin-bottom: 30px;
+        }
+
+        .help-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+
+        .step-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            min-width: 40px;
+        }
+
+        .step-text {
+            color: #fff;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .help-actions {
+            display: flex;
+            gap: 15px;
+        }
+
         /* 업로드 모달 */
         .upload-modal {
             display: none;
@@ -600,8 +686,8 @@
         <div class="header-content">
             <h1>정책 가이드 상한가 데이터베이스</h1>
             <div class="header-buttons">
-                <button class="date-trigger" id="dateTrigger">다른 날짜 견적 보기</button>
-                <button class="upload-trigger" id="uploadTrigger">+ 견적서 업로드</button>
+                <button class="date-trigger" id="dateTrigger">다른 날짜 가이드 보기</button>
+                <button class="upload-trigger" id="uploadTrigger">+ 가이드 업로드</button>
             </div>
         </div>
     </div>
@@ -610,12 +696,12 @@
         <!-- 오늘의 견적서 -->
         <div class="today-section">
             <div class="today-date" id="todayDate">2025년 8월 19일</div>
-            <div class="today-subtitle">당일 견적</div>
+            <div class="today-subtitle">당일 가이드</div>
             
             <div class="today-guides" id="todayGuides">
                 <div class="no-guides">
                     <div class="no-guides-icon">📊</div>
-                    <div>오늘 등록된 견적서가 없습니다</div>
+                    <div>오늘 등록된 가이드가 없습니다</div>
                 </div>
             </div>
         </div>
@@ -640,11 +726,48 @@
         </div>
     </div>
 
+    <!-- 도움말 모달 -->
+    <div class="help-modal" id="helpModal">
+        <div class="help-content">
+            <div class="help-header">
+                <div class="help-title">📊 가이드 업로드 방법</div>
+                <button class="close-help" id="closeHelp">&times;</button>
+            </div>
+            
+            <div class="help-steps">
+                <div class="help-step">
+                    <div class="step-icon">💻</div>
+                    <div class="step-text">웍스에서 가이드 다운로드</div>
+                </div>
+                
+                <div class="help-step">
+                    <div class="step-icon">📁</div>
+                    <div class="step-text">폴더 열기를 누르고 가이드 파일을 찾기</div>
+                </div>
+                
+                <div class="help-step">
+                    <div class="step-icon">✏️</div>
+                    <div class="step-text">날짜로 이름을 바꾸기 (예: 250801)</div>
+                </div>
+                
+                <div class="help-step">
+                    <div class="step-icon">⬆️</div>
+                    <div class="step-text">업로드하면 자동으로 해당 날짜로 등록됩니다! 🎉</div>
+                </div>
+            </div>
+
+            <div class="help-actions">
+                <button class="btn btn-secondary" id="cancelHelp">취소</button>
+                <button class="btn btn-primary" id="startUpload">✨ 업로드하기</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 업로드 모달 -->
     <div class="upload-modal" id="uploadModal">
         <div class="upload-content">
             <div class="upload-header">
-                <div class="upload-title">견적서 업로드</div>
+                <div class="upload-title">가이드 업로드</div>
                 <button class="close-upload" id="closeUpload">&times;</button>
             </div>
 
@@ -652,7 +775,7 @@
                 <input type="file" id="fileInput" accept=".png,.jpg,.jpeg" multiple>
                 <div class="drop-icon">📊</div>
                 <div class="drop-text">
-                    견적서 파일을 드래그하거나 클릭하세요<br>
+                    가이드 파일을 드래그하거나 클릭하세요<br>
                     <small>파일명에서 날짜를 자동 인식합니다 (예: 250819.jpg)</small>
                 </div>
             </div>
@@ -726,7 +849,15 @@
         function setupEventListeners() {
             // 헤더 버튼들
             document.getElementById('dateTrigger').addEventListener('click', toggleCalendar);
-            document.getElementById('uploadTrigger').addEventListener('click', openUploadModal);
+            document.getElementById('uploadTrigger').addEventListener('click', showHelpModal);
+            
+            // 도움말 모달
+            document.getElementById('closeHelp').addEventListener('click', closeHelpModal);
+            document.getElementById('cancelHelp').addEventListener('click', closeHelpModal);
+            document.getElementById('startUpload').addEventListener('click', () => {
+                closeHelpModal();
+                openUploadModal();
+            });
             
             // 업로드 모달
             document.getElementById('closeUpload').addEventListener('click', closeUploadModal);
@@ -812,7 +943,7 @@
             } else {
                 calendarSection.classList.remove('active');
                 selectedDateGuides.classList.remove('active');
-                dateTrigger.textContent = '다른 날짜 견적 보기';
+                dateTrigger.textContent = '다른 날짜 가이드 보기';
             }
         }
 
@@ -909,6 +1040,16 @@
             document.getElementById('confirmUpload').disabled = !hasValidFiles;
         }
 
+        // 도움말 모달 열기
+        function showHelpModal() {
+            document.getElementById('helpModal').classList.add('active');
+        }
+
+        // 도움말 모달 닫기
+        function closeHelpModal() {
+            document.getElementById('helpModal').classList.remove('active');
+        }
+
         // 업로드 모달 열기
         function openUploadModal() {
             document.getElementById('uploadModal').classList.add('active');
@@ -967,7 +1108,7 @@
                         year: dateInfo.year,
                         month: dateInfo.month,
                         day: dateInfo.day,
-                        title: `${dateInfo.year}년 ${dateInfo.month}월 ${dateInfo.day}일 견적서`,
+                        title: `${dateInfo.year}년 ${dateInfo.month}월 ${dateInfo.day}일 가이드`,
                         image_url: publicUrl
                     };
 
@@ -1009,7 +1150,7 @@
 
                 // 결과 메시지
                 if (successCount > 0) {
-                    showMessage(`${successCount}개 견적서가 업로드되었습니다.`, 'success');
+                    showMessage(`${successCount}개 가이드가 업로드되었습니다.`, 'success');
                     closeUploadModal();
                     await loadGuides();
                     showTodayGuides();
@@ -1069,7 +1210,7 @@
                 
             } catch (error) {
                 console.error('❌ 전체 로드 프로세스 오류:', error);
-                showMessage('견적서 로드 중 오류가 발생했습니다.', 'error');
+                showMessage('가이드 로드 중 오류가 발생했습니다.', 'error');
                 allGuides = [];
             }
         }
@@ -1089,7 +1230,7 @@
                 todayGuidesEl.innerHTML = `
                     <div class="no-guides">
                         <div class="no-guides-icon">📊</div>
-                        <div>오늘 등록된 견적서가 없습니다</div>
+                        <div>오늘 등록된 가이드가 없습니다</div>
                     </div>
                 `;
                 return;
@@ -1166,16 +1307,16 @@
             const dateTrigger = document.getElementById('dateTrigger');
             
             if (selectedGuides.length === 0) {
-                showMessage('해당 날짜에 견적서가 없습니다.', 'error');
+                showMessage('해당 날짜에 가이드가 없습니다.', 'error');
                 return;
             }
             
             // 달력 자동으로 닫기
             calendarSection.classList.remove('active');
             isCalendarVisible = false;
-            dateTrigger.textContent = '다른 날짜 견적 보기';
+            dateTrigger.textContent = '다른 날짜 가이드 보기';
             
-            selectedDateTitle.textContent = `${year}년 ${month}월 ${day}일 견적서`;
+            selectedDateTitle.textContent = `${year}년 ${month}월 ${day}일 가이드`;
             
             selectedGuidesGrid.innerHTML = selectedGuides.map((guide, index) => {
                 return `
