@@ -268,10 +268,16 @@
                 document.getElementById('monthSelect').value = detected.month;
                 populateDays();
                 document.getElementById('daySelect').value = detected.day;
-                document.getElementById('autoDetected').style.display = 'block';
-                setTimeout(() => {
-                    document.getElementById('autoDetected').style.display = 'none';
-                }, 3000);
+                
+                const autoDetectedEl = document.getElementById('autoDetected');
+                if (autoDetectedEl) {
+                    autoDetectedEl.style.display = 'block';
+                    setTimeout(() => {
+                        if (autoDetectedEl) {
+                            autoDetectedEl.style.display = 'none';
+                        }
+                    }, 3000);
+                }
             }
         }
 
@@ -434,7 +440,11 @@
             document.getElementById('uploadModal').classList.remove('show');
             document.getElementById('fileInput').value = '';
             document.getElementById('uploadStatus').style.display = 'none';
-            document.getElementById('autoDetected').style.display = 'none';
+            
+            const autoDetectedEl = document.getElementById('autoDetected');
+            if (autoDetectedEl) {
+                autoDetectedEl.style.display = 'none';
+            }
         }
 
         // 파일 업로드
@@ -450,6 +460,7 @@
             
             uploadBtn.disabled = true;
             uploadStatus.style.display = 'block';
+            uploadStatus.textContent = '업로드 중...';
 
             try {
                 const month = parseInt(document.getElementById('monthSelect').value);
@@ -457,24 +468,46 @@
                 const timestamp = Date.now();
                 const fileName = `${month}_${day}_${timestamp}_${file.name}`;
 
-                // Storage 업로드
-                const { error: uploadError } = await supabase.storage
-                    .from('gift-guide-images')
-                    .upload(fileName, file);
+                console.log('업로드 시작:', fileName);
 
-                if (uploadError) throw uploadError;
+                // Storage 업로드
+                const { data: uploadData, error: uploadError } = await supabase.storage
+                    .from('gift-guide-images')
+                    .upload(fileName, file, {
+                        cacheControl: '3600',
+                        upsert: false
+                    });
+
+                if (uploadError) {
+                    console.error('Storage 업로드 오류:', uploadError);
+                    throw new Error(`이미지 업로드 실패: ${uploadError.message}`);
+                }
+
+                console.log('Storage 업로드 성공:', uploadData);
 
                 // 공개 URL 가져오기
                 const { data: { publicUrl } } = supabase.storage
                     .from('gift-guide-images')
                     .getPublicUrl(fileName);
 
-                // DB 저장
-                const { error: dbError } = await supabase
-                    .from('gift_guides')
-                    .insert({ month, day, image_url: publicUrl });
+                console.log('공개 URL:', publicUrl);
 
-                if (dbError) throw dbError;
+                // DB 저장
+                const { data: dbData, error: dbError } = await supabase
+                    .from('gift_guides')
+                    .insert({ 
+                        month: month, 
+                        day: day, 
+                        image_url: publicUrl 
+                    })
+                    .select();
+
+                if (dbError) {
+                    console.error('DB 저장 오류:', dbError);
+                    throw new Error(`데이터 저장 실패: ${dbError.message}`);
+                }
+
+                console.log('DB 저장 성공:', dbData);
 
                 hideModal();
                 await fetchGuides();
@@ -482,10 +515,14 @@
 
             } catch (error) {
                 console.error('업로드 오류:', error);
-                alert('업로드 중 오류가 발생했습니다.');
+                uploadStatus.textContent = `오류: ${error.message}`;
+                uploadStatus.style.color = '#dc2626';
+                setTimeout(() => {
+                    uploadStatus.style.display = 'none';
+                    uploadStatus.style.color = 'var(--primary-blue)';
+                }, 5000);
             } finally {
                 uploadBtn.disabled = false;
-                uploadStatus.style.display = 'none';
             }
         }
 
