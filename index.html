@@ -126,6 +126,7 @@
             padding: 8px 12px;
             font-size: 12px;
             color: #1976d2;
+            display: none;
         }
 
         .delete-btn {
@@ -142,7 +143,7 @@
             font-size: 16px;
             width: 36px;
             height: 36px;
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
         }
@@ -434,7 +435,7 @@
 
         .upload-actions {
             display: flex;
-            gap: 10px;
+            gap: 15px;
         }
 
         .btn {
@@ -601,7 +602,6 @@
             <div class="header-buttons">
                 <button class="date-trigger" id="dateTrigger">다른 날짜 견적 보기</button>
                 <button class="upload-trigger" id="uploadTrigger">+ 견적서 업로드</button>
-                <button class="nav-btn" id="debugBtn" style="background: #666; margin-left: 10px;">🔧 디버그</button>
             </div>
         </div>
     </div>
@@ -660,7 +660,6 @@
             <div class="file-list" id="fileList"></div>
 
             <div class="upload-actions">
-                <button class="btn btn-secondary" id="repairBtn">🔧 매칭 복구</button>
                 <button class="btn btn-secondary" id="cancelUpload">취소</button>
                 <button class="btn btn-primary" id="confirmUpload" disabled>업로드</button>
             </div>
@@ -709,9 +708,6 @@
                     <div class="no-guides">
                         <div class="no-guides-icon">⚠️</div>
                         <div>데이터베이스 설정이 필요합니다</div>
-                        <div style="margin-top: 10px; font-size: 12px; color: #666;">
-                            🔧 디버그 버튼을 클릭하여 상태를 확인하세요
-                        </div>
                     </div>
                 `;
                 return;
@@ -731,13 +727,11 @@
             // 헤더 버튼들
             document.getElementById('dateTrigger').addEventListener('click', toggleCalendar);
             document.getElementById('uploadTrigger').addEventListener('click', openUploadModal);
-            document.getElementById('debugBtn').addEventListener('click', showDebugInfo);
             
             // 업로드 모달
             document.getElementById('closeUpload').addEventListener('click', closeUploadModal);
             document.getElementById('cancelUpload').addEventListener('click', closeUploadModal);
             document.getElementById('confirmUpload').addEventListener('click', uploadGuides);
-            document.getElementById('repairBtn').addEventListener('click', repairStorageDbMatch);
 
             // 파일 드롭존
             const dropZone = document.getElementById('dropZone');
@@ -790,273 +784,16 @@
             });
         }
 
-        // 디버그 정보 표시
+        // 디버그 정보 표시 (비활성화됨)
         async function showDebugInfo() {
-            console.log('🔧 디버그 정보 수집 시작');
-            
-            const debugContainer = document.createElement('div');
-            debugContainer.style.cssText = `
-                position: fixed;
-                top: 10%;
-                left: 50%;
-                transform: translateX(-50%);
-                background: #0a0a0a;
-                border: 2px solid #1976d2;
-                border-radius: 12px;
-                padding: 20px;
-                max-width: 80%;
-                max-height: 80%;
-                overflow-y: auto;
-                z-index: 3000;
-                color: #fff;
-                font-family: monospace;
-                font-size: 14px;
-                white-space: pre-wrap;
-            `;
-            
-            let debugInfo = '🔧 Supabase 연결 상태 진단\n' + '='.repeat(40) + '\n\n';
-            
-            // 실시간 업데이트 함수
-            function updateDebugInfo(text) {
-                debugInfo += text + '\n';
-                debugContainer.textContent = debugInfo;
-            }
-            
-            // 초기 표시
-            debugContainer.textContent = debugInfo + '진단 중...';
-            document.body.appendChild(debugContainer);
-            
-            // 닫기 버튼
-            const closeBtn = document.createElement('button');
-            closeBtn.textContent = '✕ 닫기';
-            closeBtn.style.cssText = `
-                position: absolute;
-                top: 10px;
-                right: 10px;
-                background: #1976d2;
-                color: white;
-                border: none;
-                padding: 5px 10px;
-                border-radius: 4px;
-                cursor: pointer;
-            `;
-            closeBtn.onclick = () => document.body.removeChild(debugContainer);
-            debugContainer.appendChild(closeBtn);
-            
-            try {
-                // 1. 기본 연결 테스트
-                updateDebugInfo('1️⃣ 기본 연결 테스트...');
-                
-                // 2. 테이블 존재 확인
-                updateDebugInfo('2️⃣ guides 테이블 확인...');
-                try {
-                    const { data: tableData, error: tableError } = await supabaseClient
-                        .from('guides')
-                        .select('*')
-                        .limit(1);
-                        
-                    if (tableError) {
-                        updateDebugInfo(`   ❌ 오류: ${tableError.message}`);
-                        updateDebugInfo(`   📄 오류 코드: ${tableError.code || 'N/A'}`);
-                        updateDebugInfo(`   💡 힌트: ${tableError.hint || 'N/A'}`);
-                    } else {
-                        updateDebugInfo('   ✅ 테이블 연결 성공');
-                        
-                        // 전체 개수 확인
-                        const { count, error: countError } = await supabaseClient
-                            .from('guides')
-                            .select('*', { count: 'exact', head: true });
-                            
-                        if (!countError) {
-                            updateDebugInfo(`   📊 총 레코드 수: ${count}개`);
-                        }
-                    }
-                } catch (e) {
-                    updateDebugInfo(`   ❌ 테이블 접근 실패: ${e.message}`);
-                }
-                
-                // 3. Storage 확인
-                updateDebugInfo('\n3️⃣ Storage 버킷 확인...');
-                try {
-                    const { data: buckets, error: bucketsError } = await supabaseClient.storage.listBuckets();
-                    
-                    if (bucketsError) {
-                        updateDebugInfo(`   ❌ 버킷 목록 오류: ${bucketsError.message}`);
-                    } else {
-                        updateDebugInfo(`   📁 총 버킷 수: ${buckets.length}개`);
-                        
-                        const guideImagesBucket = buckets.find(bucket => bucket.name === 'guide-images');
-                        if (guideImagesBucket) {
-                            updateDebugInfo('   ✅ guide-images 버킷 발견');
-                            updateDebugInfo(`   🔒 공개 상태: ${guideImagesBucket.public ? '공개' : '비공개'}`);
-                            
-                            // 파일 목록 확인
-                            const { data: files, error: filesError } = await supabaseClient.storage
-                                .from('guide-images')
-                                .list();
-                                
-                            if (files) {
-                                updateDebugInfo(`   📂 저장된 파일: ${files.filter(f => f.name !== '.emptyFolderPlaceholder').length}개`);
-                                if (files.length > 1) {
-                                    const realFiles = files.filter(f => f.name !== '.emptyFolderPlaceholder');
-                                    updateDebugInfo(`   📋 최근 파일: ${realFiles.slice(0, 3).map(f => f.name).join(', ')}`);
-                                }
-                            }
-                        } else {
-                            updateDebugInfo('   ❌ guide-images 버킷 없음');
-                        }
-                    }
-                } catch (e) {
-                    updateDebugInfo(`   ❌ Storage 접근 실패: ${e.message}`);
-                }
-                
-                // 4. 현재 앱 상태
-                updateDebugInfo('\n4️⃣ 현재 앱 상태...');
-                updateDebugInfo(`   📱 로드된 가이드: ${allGuides.length}개`);
-                updateDebugInfo(`   📁 선택된 파일: ${selectedFiles.length}개`);
-                
-                const today = new Date();
-                const todayGuides = allGuides.filter(g => 
-                    g.year === today.getFullYear() && 
-                    g.month === today.getMonth() + 1 && 
-                    g.day === today.getDate()
-                );
-                updateDebugInfo(`   📅 오늘 가이드: ${todayGuides.length}개`);
-                
-                // 5. 권한 테스트
-                updateDebugInfo('\n5️⃣ 권한 테스트...');
-                try {
-                    // 더미 데이터 삽입 시도 (즉시 삭제)
-                    const testData = {
-                        year: 1999,
-                        month: 1,
-                        day: 1,
-                        title: 'TEST_RECORD_DELETE_ME',
-                        image_url: 'test.jpg'
-                    };
-                    
-                    const { data: insertData, error: insertError } = await supabaseClient
-                        .from('guides')
-                        .insert(testData)
-                        .select();
-                        
-                    if (insertError) {
-                        updateDebugInfo(`   ❌ INSERT 권한 없음: ${insertError.message}`);
-                        if (insertError.code === '42501') {
-                            updateDebugInfo('   💡 RLS 정책 문제일 가능성이 높습니다');
-                        }
-                    } else {
-                        updateDebugInfo('   ✅ INSERT 권한 확인');
-                        
-                        // 테스트 레코드 삭제
-                        if (insertData && insertData[0]) {
-                            await supabaseClient
-                                .from('guides')
-                                .delete()
-                                .eq('id', insertData[0].id);
-                            updateDebugInfo('   🧹 테스트 레코드 삭제 완료');
-                        }
-                    }
-                } catch (e) {
-                    updateDebugInfo(`   ❌ 권한 테스트 실패: ${e.message}`);
-                }
-                
-                updateDebugInfo('\n✅ 진단 완료!');
-                
-            } catch (error) {
-                updateDebugInfo(`\n❌ 전체 진단 오류: ${error.message}`);
-                console.error('디버그 오류:', error);
-            }
+            // 디버그 기능이 비활성화되었습니다
+            return;
         }
 
-        // Storage 파일과 DB 매칭 복구 시도
+        // Storage 파일과 DB 매칭 복구 시도 (비활성화됨)
         async function repairStorageDbMatch() {
-            try {
-                console.log('🔧 Storage-DB 매칭 복구 시도...');
-                
-                // Storage에서 파일 목록 가져오기
-                const { data: files, error: filesError } = await supabaseClient.storage
-                    .from('guide-images')
-                    .list();
-                    
-                if (filesError || !files) {
-                    console.error('Storage 파일 목록 가져오기 실패:', filesError);
-                    return;
-                }
-                
-                // DB에서 현재 레코드들 가져오기
-                const { data: dbGuides, error: dbError } = await supabaseClient
-                    .from('guides')
-                    .select('*');
-                    
-                if (dbError) {
-                    console.error('DB 레코드 가져오기 실패:', dbError);
-                    return;
-                }
-                
-                // Storage에는 있지만 DB에는 없는 파일들 찾기
-                const missingInDb = files.filter(file => {
-                    if (!file.name || file.name === '.emptyFolderPlaceholder') return false;
-                    
-                    const fileUrl = supabaseClient.storage
-                        .from('guide-images')
-                        .getPublicUrl(file.name).data.publicUrl;
-                        
-                    return !dbGuides.some(guide => guide.image_url === fileUrl);
-                });
-                
-                console.log(`발견된 누락 파일: ${missingInDb.length}개`);
-                
-                if (missingInDb.length > 0) {
-                    const shouldRepair = confirm(`Storage에 ${missingInDb.length}개 파일이 DB에 없습니다. 복구하시겠습니까?`);
-                    
-                    if (shouldRepair) {
-                        let repairedCount = 0;
-                        
-                        for (const file of missingInDb) {
-                            // 파일명에서 날짜 추출 시도
-                            const dateMatch = file.name.match(/(\d+)_(\d+)_/);
-                            if (dateMatch) {
-                                const month = parseInt(dateMatch[1]);
-                                const day = parseInt(dateMatch[2]);
-                                const year = 2025; // 기본값
-                                
-                                const publicUrl = supabaseClient.storage
-                                    .from('guide-images')
-                                    .getPublicUrl(file.name).data.publicUrl;
-                                
-                                const { error: insertError } = await supabaseClient
-                                    .from('guides')
-                                    .insert({
-                                        year,
-                                        month,
-                                        day,
-                                        title: `${year}년 ${month}월 ${day}일 견적서`,
-                                        image_url: publicUrl
-                                    });
-                                
-                                if (!insertError) {
-                                    repairedCount++;
-                                    console.log(`✅ 복구됨: ${file.name}`);
-                                } else {
-                                    console.error(`❌ 복구 실패: ${file.name}`, insertError);
-                                }
-                            }
-                        }
-                        
-                        if (repairedCount > 0) {
-                            showMessage(`${repairedCount}개 파일이 복구되었습니다.`, 'success');
-                            await loadGuides();
-                            showTodayGuides();
-                            updateCalendar();
-                        }
-                    }
-                }
-                
-            } catch (error) {
-                console.error('복구 프로세스 오류:', error);
-                showMessage('복구 중 오류가 발생했습니다.', 'error');
-            }
+            // 복구 기능이 비활성화되었습니다
+            return;
         }
 
         // 달력 토글
@@ -1359,16 +1096,9 @@
             }
 
             todayGuidesEl.innerHTML = todayGuides.map((guide, index) => {
-                const timeStr = new Date(guide.created_at).toLocaleTimeString('ko-KR', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-                
                 return `
                     <div class="guide-image" onclick="openViewer([${todayGuides.map(g => allGuides.indexOf(g)).join(',')}], ${index})">
                         <img src="${guide.image_url}" alt="${guide.title}" loading="lazy">
-                        <div class="guide-overlay">${timeStr}</div>
-                        <button class="delete-btn" onclick="deleteGuide('${guide.id}', event)">🗑️</button>
                     </div>
                 `;
             }).join('');
@@ -1432,26 +1162,25 @@
             const selectedDateGuides = document.getElementById('selectedDateGuides');
             const selectedDateTitle = document.getElementById('selectedDateTitle');
             const selectedGuidesGrid = document.getElementById('selectedGuidesGrid');
+            const calendarSection = document.getElementById('calendarSection');
+            const dateTrigger = document.getElementById('dateTrigger');
             
             if (selectedGuides.length === 0) {
-                selectedDateGuides.classList.remove('active');
                 showMessage('해당 날짜에 견적서가 없습니다.', 'error');
                 return;
             }
             
+            // 달력 자동으로 닫기
+            calendarSection.classList.remove('active');
+            isCalendarVisible = false;
+            dateTrigger.textContent = '다른 날짜 견적 보기';
+            
             selectedDateTitle.textContent = `${year}년 ${month}월 ${day}일 견적서`;
             
             selectedGuidesGrid.innerHTML = selectedGuides.map((guide, index) => {
-                const timeStr = new Date(guide.created_at).toLocaleTimeString('ko-KR', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-                
                 return `
                     <div class="guide-image" onclick="openViewer([${selectedGuides.map(g => allGuides.indexOf(g)).join(',')}], ${index})">
                         <img src="${guide.image_url}" alt="${guide.title}" loading="lazy">
-                        <div class="guide-overlay">${timeStr}</div>
-                        <button class="delete-btn" onclick="deleteGuide('${guide.id}', event)">🗑️</button>
                     </div>
                 `;
             }).join('');
@@ -1502,37 +1231,10 @@
                 currentImageIndex < currentViewImages.length - 1 ? 'block' : 'none';
         }
 
-        // 가이드 삭제
-        window.deleteGuide = async function(id, event) {
-            event.stopPropagation();
-            
-            if (!confirm('이 견적서를 삭제하시겠습니까?')) return;
-
-            try {
-                const guide = allGuides.find(g => g.id === id);
-                if (guide && guide.image_url) {
-                    const fileName = guide.image_url.split('/').pop();
-                    await supabaseClient.storage
-                        .from('guide-images')
-                        .remove([fileName]);
-                }
-
-                const { error } = await supabaseClient
-                    .from('guides')
-                    .delete()
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                showMessage('견적서가 삭제되었습니다.', 'success');
-                await loadGuides();
-                showTodayGuides();
-                updateCalendar();
-                
-            } catch (error) {
-                console.error('삭제 오류:', error);
-                showMessage('삭제 중 오류가 발생했습니다.', 'error');
-            }
+        // 가이드 삭제 (비활성화됨)
+        window.deleteGuide = function(id, event) {
+            // 삭제 기능이 비활성화되었습니다
+            return;
         }
 
         // 메시지 표시
