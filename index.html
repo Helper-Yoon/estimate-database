@@ -602,7 +602,7 @@
         const SUPABASE_URL = 'https://bhtqjipygkawoyieidgp.supabase.co';
         const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJodHFqaXB5Z2thd295aWVpZGdwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDQ4ODk2OCwiZXhwIjoyMDcwMDY0OTY4fQ.HRngdvqtWBmGgd4VgcFsE7iYhQuTnxUuVyq7fiQHNng';
         
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
         // 전역 변수
         let selectedFiles = [];
@@ -813,7 +813,7 @@
                     const fileName = `${month}_${day}_${timestamp}_${file.name}`;
 
                     // Storage에 업로드
-                    const { data: uploadData, error: uploadError } = await supabase.storage
+                    const { data: uploadData, error: uploadError } = await supabaseClient.storage
                         .from('guide-images')
                         .upload(fileName, file);
 
@@ -823,12 +823,12 @@
                     }
 
                     // 공개 URL 가져오기
-                    const { data: { publicUrl } } = supabase.storage
+                    const { data: { publicUrl } } = supabaseClient.storage
                         .from('guide-images')
                         .getPublicUrl(fileName);
 
                     // 데이터베이스에 저장
-                    const { error: dbError } = await supabase
+                    const { error: dbError } = await supabaseClient
                         .from('guides')
                         .insert({
                             month: parseInt(month),
@@ -862,7 +862,7 @@
         // 가이드 목록 로드
         async function loadGuides() {
             try {
-                const { data, error } = await supabase
+                const { data, error } = await supabaseClient
                     .from('guides')
                     .select('*')
                     .order('month', { ascending: false })
@@ -975,12 +975,12 @@
                 const guide = allGuides.find(g => g.id === id);
                 if (guide && guide.image_url) {
                     const fileName = guide.image_url.split('/').pop();
-                    await supabase.storage
+                    await supabaseClient.storage
                         .from('guide-images')
                         .remove([fileName]);
                 }
 
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('guides')
                     .delete()
                     .eq('id', id);
@@ -1024,7 +1024,7 @@
         async function initDatabase() {
             try {
                 // 테이블이 없으면 생성
-                const { error } = await supabase.rpc('exec_sql', {
+                const { error } = await supabaseClient.rpc('exec_sql', {
                     sql: `
                         CREATE TABLE IF NOT EXISTS guides (
                             id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
