@@ -249,7 +249,72 @@
             document.getElementById('monthSelect').value = today.getMonth() + 1;
             populateDays();
             document.getElementById('daySelect').value = today.getDate();
+            
+            // 파일 선택 시 자동 날짜 감지
+            document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+            
             fetchGuides();
+        }
+
+        // 파일 선택 시 처리
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const fileName = file.name;
+            const detected = extractDateFromFileName(fileName);
+            
+            if (detected.month && detected.day) {
+                document.getElementById('monthSelect').value = detected.month;
+                populateDays();
+                document.getElementById('daySelect').value = detected.day;
+                document.getElementById('autoDetected').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('autoDetected').style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // 파일명에서 날짜 추출
+        function extractDateFromFileName(fileName) {
+            // 파일 확장자 제거
+            const nameWithoutExt = fileName.replace(/\.[^/.]+$/, "");
+            
+            // 다양한 패턴으로 월/일 추출
+            const patterns = [
+                // "8월19일", "08월19일" 형태
+                /(\d{1,2})월\s*(\d{1,2})일/,
+                // "8-19", "08-19" 형태  
+                /(\d{1,2})-(\d{1,2})/,
+                // "8_19", "08_19" 형태
+                /(\d{1,2})_(\d{1,2})/,
+                // "0819", "819" 형태 (4자리 또는 3자리)
+                /(\d{1,2})(\d{2})(?!\d)/,
+                // "8.19" 형태
+                /(\d{1,2})\.(\d{1,2})/,
+                // "8 19" 형태 (공백)
+                /(\d{1,2})\s+(\d{1,2})/
+            ];
+
+            for (const pattern of patterns) {
+                const match = nameWithoutExt.match(pattern);
+                if (match) {
+                    let month = parseInt(match[1]);
+                    let day = parseInt(match[2]);
+                    
+                    // 월/일 범위 검증
+                    if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+                        return { month, day };
+                    }
+                    
+                    // 순서가 바뀐 경우도 체크 (일이 월보다 클 때)
+                    if (day >= 1 && day <= 12 && month >= 1 && month <= 31) {
+                        return { month: day, day: month };
+                    }
+                }
+            }
+
+            return { month: null, day: null };
         }
 
         // 일 옵션 채우기
@@ -356,6 +421,12 @@
 
         // 모달 표시/숨기기
         function showModal() {
+            // 현재 날짜로 초기화
+            const today = new Date();
+            document.getElementById('monthSelect').value = today.getMonth() + 1;
+            populateDays();
+            document.getElementById('daySelect').value = today.getDate();
+            
             document.getElementById('uploadModal').classList.add('show');
         }
 
@@ -363,6 +434,7 @@
             document.getElementById('uploadModal').classList.remove('show');
             document.getElementById('fileInput').value = '';
             document.getElementById('uploadStatus').style.display = 'none';
+            document.getElementById('autoDetected').style.display = 'none';
         }
 
         // 파일 업로드
