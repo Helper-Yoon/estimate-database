@@ -3,225 +3,554 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>사은품 가이드</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <title>가이드 시스템</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root {
-            --primary-blue: #0066ff;
-            --primary-blue-dark: #0052cc;
-            --bg-primary: #000000;
-            --bg-secondary: #111111;
-            --bg-tertiary: #1a1a1a;
-            --text-primary: #ffffff;
-            --text-secondary: #888888;
-            --border: #333333;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+
         body {
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            background: #000000;
+            color: #ffffff;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
+            min-height: 100vh;
         }
-        
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        
-        .btn-primary {
-            background: var(--primary-blue);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-        
-        .btn-primary:hover { background: var(--primary-blue-dark); }
-        .btn-primary:disabled { background: #333333; cursor: not-allowed; }
-        
-        .card {
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            padding: 24px;
-            border: 1px solid var(--border);
-        }
-        
-        .guide-item {
-            background: var(--bg-tertiary);
-            border-radius: 8px;
-            padding: 16px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid var(--border);
-            margin-bottom: 12px;
-        }
-        
-        .guide-item:hover { background: #222222; }
-        .guide-item.active { background: var(--primary-blue); border-color: var(--primary-blue); }
-        
-        .modal {
-            position: fixed;
+
+        .header {
+            background: #0a0a0a;
+            border-bottom: 2px solid #0080FF;
+            padding: 20px;
+            position: sticky;
             top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
-            display: none;
-            align-items: center;
-            justify-content: center;
             z-index: 100;
         }
-        
-        .modal.show { display: flex; }
-        
-        .modal-content {
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            padding: 32px;
-            max-width: 480px;
-            width: 90%;
-            border: 1px solid var(--border);
-        }
-        
-        .form-group { margin-bottom: 20px; }
-        .form-label { display: block; margin-bottom: 8px; color: var(--text-secondary); font-weight: 500; }
-        
-        .form-input, .form-select {
-            width: 100%;
-            padding: 12px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 16px;
-        }
-        
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: var(--primary-blue);
-        }
-        
-        .image-viewer {
-            background: var(--bg-primary);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-        }
-        
-        .image-viewer img {
-            max-width: 100%;
-            max-height: 70vh;
-            border-radius: 8px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-        
-        .empty-state {
-            color: var(--text-secondary);
-            text-align: center;
-            padding: 40px 20px;
-        }
-        
-        .header {
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border);
-            padding: 20px 0;
-            margin-bottom: 32px;
-        }
-        
+
         .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
-        .logo { font-size: 24px; font-weight: 700; color: var(--primary-blue); }
-        
-        .main-grid {
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0080FF;
+        }
+
+        .upload-trigger {
+            background: #0080FF;
+            color: #000;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .upload-trigger:hover {
+            opacity: 0.9;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .date-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .date-filter select {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .date-filter select:hover {
+            border-color: #0080FF;
+        }
+
+        .date-filter select:focus {
+            outline: none;
+            border-color: #0080FF;
+        }
+
+        .today-btn {
+            background: transparent;
+            border: 1px solid #0080FF;
+            color: #0080FF;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .today-btn:hover {
+            background: #0080FF;
+            color: #000;
+        }
+
+        .guide-grid {
             display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 32px;
-        }
-        
-        @media (max-width: 768px) {
-            .main-grid { grid-template-columns: 1fr; }
-            .container { padding: 0 16px; }
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
         }
 
-        .auto-detected {
-            margin-top: 8px;
-            padding: 8px;
-            background: var(--bg-primary);
-            border-radius: 6px;
+        .guide-card {
+            background: #0a0a0a;
+            border: 1px solid #1a1a1a;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .guide-card:hover {
+            border-color: #0080FF;
+            transform: translateY(-2px);
+        }
+
+        .guide-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: #1a1a1a;
+        }
+
+        .guide-info {
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .guide-date {
             font-size: 14px;
-            color: var(--primary-blue);
-            display: none;
+            font-weight: 600;
+            color: #0080FF;
         }
 
-        .upload-status {
-            margin-top: 20px;
+        .delete-btn {
+            background: transparent;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+
+        .delete-btn:hover {
+            color: #ff4444;
+        }
+
+        /* 업로드 모달 */
+        .upload-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .upload-modal.active {
+            display: flex;
+        }
+
+        .upload-content {
+            background: #0a0a0a;
+            border: 2px solid #0080FF;
+            border-radius: 8px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .upload-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .upload-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #0080FF;
+        }
+
+        .close-upload {
+            background: transparent;
+            border: none;
+            color: #666;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+
+        .close-upload:hover {
+            color: #fff;
+        }
+
+        .date-inputs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .date-inputs select {
+            flex: 1;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .date-inputs select:focus {
+            outline: none;
+            border-color: #0080FF;
+        }
+
+        .drop-zone {
+            border: 2px dashed #333;
+            border-radius: 8px;
+            padding: 40px 20px;
             text-align: center;
-            color: var(--primary-blue);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 20px;
+        }
+
+        .drop-zone:hover {
+            border-color: #0080FF;
+            background: rgba(0, 128, 255, 0.05);
+        }
+
+        .drop-zone.active {
+            border-color: #0080FF;
+            background: rgba(0, 128, 255, 0.1);
+        }
+
+        .drop-zone input {
             display: none;
         }
 
-        .error-message {
-            color: #dc2626;
+        .drop-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+            color: #0080FF;
+        }
+
+        .drop-text {
+            color: #666;
             font-size: 14px;
-            margin-top: 8px;
+        }
+
+        .file-list {
+            max-height: 150px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .file-item {
+            background: #1a1a1a;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .file-name {
+            color: #0080FF;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .file-remove {
+            background: transparent;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .file-remove:hover {
+            color: #ff4444;
+        }
+
+        .upload-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-primary {
+            background: #0080FF;
+            color: #000;
+        }
+
+        .btn-secondary {
+            background: #1a1a1a;
+            color: #666;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* 이미지 뷰어 모달 */
+        .viewer-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .viewer-modal.active {
+            display: flex;
+        }
+
+        .viewer-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .viewer-content img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .viewer-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 32px;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+        }
+
+        .viewer-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 128, 255, 0.2);
+            border: none;
+            color: #0080FF;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .viewer-nav:hover {
+            background: rgba(0, 128, 255, 0.4);
+        }
+
+        .viewer-prev {
+            left: 20px;
+        }
+
+        .viewer-next {
+            right: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .message {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            z-index: 3000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .message.success {
+            background: #0080FF;
+            color: #000;
+        }
+
+        .message.error {
+            background: #ff4444;
+            color: #fff;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #0a0a0a;
+            border-radius: 4px;
+            border: 1px solid #1a1a1a;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .stat-value {
+            color: #0080FF;
+            font-weight: 600;
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
-    <!-- 헤더 -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <h1 class="logo">사은품 가이드</h1>
-                <button class="btn-primary" onclick="showModal()">
-                    <span>+ 가이드 추가</span>
-                </button>
+    <div class="header">
+        <div class="header-content">
+            <h1>가이드 관리 시스템</h1>
+            <button class="upload-trigger" id="uploadTrigger">+ 가이드 업로드</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- 통계 -->
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-label">전체 가이드:</span>
+                <span class="stat-value" id="totalCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">오늘 가이드:</span>
+                <span class="stat-value" id="todayCount">0</span>
             </div>
         </div>
-    </header>
 
-    <!-- 메인 컨텐츠 -->
-    <main class="container">
-        <div class="main-grid">
-            <!-- 가이드 목록 -->
-            <aside>
-                <div class="card">
-                    <h2 style="margin-bottom: 20px; font-size: 18px; font-weight: 600;">가이드 목록</h2>
-                    <div id="guideList">
-                        <div class="empty-state">로딩 중...</div>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- 이미지 뷰어 -->
-            <section>
-                <div class="card">
-                    <div id="viewer">
-                        <div class="empty-state">
-                            <p>가이드를 선택하여 이미지를 확인하세요</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
+        <!-- 필터 -->
+        <div class="date-filter">
+            <select id="filterMonth">
+                <option value="">전체 월</option>
+                <option value="1">1월</option>
+                <option value="2">2월</option>
+                <option value="3">3월</option>
+                <option value="4">4월</option>
+                <option value="5">5월</option>
+                <option value="6">6월</option>
+                <option value="7">7월</option>
+                <option value="8">8월</option>
+                <option value="9">9월</option>
+                <option value="10">10월</option>
+                <option value="11">11월</option>
+                <option value="12">12월</option>
+            </select>
+            <select id="filterDay">
+                <option value="">전체 일</option>
+            </select>
+            <button class="today-btn" id="todayBtn">오늘</button>
         </div>
-    </main>
+
+        <!-- 가이드 그리드 -->
+        <div class="guide-grid" id="guideGrid">
+            <div class="loading">가이드 로딩 중...</div>
+        </div>
+    </div>
 
     <!-- 업로드 모달 -->
-    <div id="uploadModal" class="modal">
-        <div class="modal-content">
-            <h3 style="margin-bottom: 24px; font-size: 20px; font-weight: 600; color: var(--primary-blue);">가이드 추가</h3>
+    <div class="upload-modal" id="uploadModal">
+        <div class="upload-content">
+            <div class="upload-header">
+                <div class="upload-title">가이드 업로드</div>
+                <button class="close-upload" id="closeUpload">&times;</button>
+            </div>
             
-            <div class="form-group">
-                <label class="form-label">월</label>
-                <select id="monthSelect" class="form-select">
+            <div class="date-inputs">
+                <select id="uploadMonth">
+                    <option value="">월 선택</option>
                     <option value="1">1월</option>
                     <option value="2">2월</option>
                     <option value="3">3월</option>
@@ -235,125 +564,148 @@
                     <option value="11">11월</option>
                     <option value="12">12월</option>
                 </select>
+                <select id="uploadDay">
+                    <option value="">일 선택</option>
+                </select>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">일</label>
-                <select id="daySelect" class="form-select"></select>
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">이미지 파일</label>
-                <input type="file" id="fileInput" accept="image/*" class="form-input">
-                <div id="autoDetected" class="auto-detected">
-                    📅 파일명에서 자동 감지됨
+            <div class="drop-zone" id="dropZone">
+                <input type="file" id="fileInput" accept=".png,.jpg,.jpeg" multiple>
+                <div class="drop-icon">📁</div>
+                <div class="drop-text">
+                    클릭하거나 파일을 드래그하세요<br>
+                    <small>PNG, JPG (여러 파일 가능)</small>
                 </div>
-                <div id="uploadError" class="error-message" style="display: none;"></div>
             </div>
 
-            <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 32px;">
-                <button onclick="hideModal()" style="background: var(--bg-tertiary); color: var(--text-secondary); border: 1px solid var(--border); padding: 12px 24px; border-radius: 8px; cursor: pointer;">취소</button>
-                <button id="uploadBtn" class="btn-primary" onclick="handleUpload()">업로드</button>
+            <div class="file-list" id="fileList"></div>
+
+            <div class="upload-actions">
+                <button class="btn btn-secondary" id="cancelUpload">취소</button>
+                <button class="btn btn-primary" id="confirmUpload" disabled>업로드</button>
             </div>
-            
-            <div id="uploadStatus" class="upload-status">업로드 중...</div>
+        </div>
+    </div>
+
+    <!-- 이미지 뷰어 모달 -->
+    <div class="viewer-modal" id="viewerModal">
+        <div class="viewer-content">
+            <button class="viewer-close" id="viewerClose">&times;</button>
+            <button class="viewer-nav viewer-prev" id="viewerPrev">‹</button>
+            <button class="viewer-nav viewer-next" id="viewerNext">›</button>
+            <img id="viewerImage" src="" alt="">
         </div>
     </div>
 
     <script>
         // Supabase 설정
         const SUPABASE_URL = 'https://bhtqjipygkawoyieidgp.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJodHFqaXB5Z2thd285aWVpZGdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0ODg5NjgsImV4cCI6MjA3MDA2NDk2OH0.hu2EAj9RCq436QBtfbEVF4aGOau4WWomLMDKahN4iAA';
+        const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJodHFqaXB5Z2thd295aWVpZGdwIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NDQ4ODk2OCwiZXhwIjoyMDcwMDY0OTY4fQ.HRngdvqtWBmGgd4VgcFsE7iYhQuTnxUuVyq7fiQHNng';
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        
-        let guides = [];
-        let selectedGuide = null;
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+
+        // 전역 변수
+        let selectedFiles = [];
+        let allGuides = [];
+        let filteredGuides = [];
+        let currentImageIndex = 0;
 
         // 초기화
-        function init() {
-            const today = new Date();
-            document.getElementById('monthSelect').value = today.getMonth() + 1;
-            populateDays();
-            document.getElementById('daySelect').value = today.getDate();
-            
-            // 파일 선택 시 자동 날짜 감지
-            document.getElementById('fileInput').addEventListener('change', handleFileSelect);
-            
-            fetchGuides();
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeApp();
+        });
+
+        async function initializeApp() {
+            setupEventListeners();
+            initializeDateSelectors();
+            await loadGuides();
+            setTodayDate();
+            updateStats();
         }
 
-        // 파일 선택 시 처리
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        // 이벤트 리스너 설정
+        function setupEventListeners() {
+            // 업로드 모달
+            document.getElementById('uploadTrigger').addEventListener('click', openUploadModal);
+            document.getElementById('closeUpload').addEventListener('click', closeUploadModal);
+            document.getElementById('cancelUpload').addEventListener('click', closeUploadModal);
+            document.getElementById('confirmUpload').addEventListener('click', uploadGuides);
 
-            const fileName = file.name;
-            const detected = extractDateFromFileName(fileName);
-            
-            if (detected.month && detected.day) {
-                document.getElementById('monthSelect').value = detected.month;
-                populateDays();
-                document.getElementById('daySelect').value = detected.day;
-                
-                const autoDetectedEl = document.getElementById('autoDetected');
-                if (autoDetectedEl) {
-                    autoDetectedEl.style.display = 'block';
-                    setTimeout(() => {
-                        if (autoDetectedEl) {
-                            autoDetectedEl.style.display = 'none';
-                        }
-                    }, 3000);
+            // 파일 드롭존
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
+
+            dropZone.addEventListener('click', () => fileInput.click());
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('active');
+            });
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('active');
+            });
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('active');
+                handleFiles(e.dataTransfer.files);
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+            });
+
+            // 필터
+            document.getElementById('filterMonth').addEventListener('change', filterGuides);
+            document.getElementById('filterDay').addEventListener('change', filterGuides);
+            document.getElementById('todayBtn').addEventListener('click', showToday);
+
+            // 뷰어 모달
+            document.getElementById('viewerClose').addEventListener('click', closeViewerModal);
+            document.getElementById('viewerPrev').addEventListener('click', showPrevImage);
+            document.getElementById('viewerNext').addEventListener('click', showNextImage);
+            document.getElementById('viewerModal').addEventListener('click', (e) => {
+                if (e.target.id === 'viewerModal') closeViewerModal();
+            });
+
+            // 키보드 단축키
+            document.addEventListener('keydown', (e) => {
+                if (document.getElementById('viewerModal').classList.contains('active')) {
+                    if (e.key === 'ArrowLeft') showPrevImage();
+                    if (e.key === 'ArrowRight') showNextImage();
+                    if (e.key === 'Escape') closeViewerModal();
                 }
-            }
+            });
+        }
 
-            // 파일 크기 체크 (10MB 제한)
-            const maxSize = 10 * 1024 * 1024; // 10MB
-            if (file.size > maxSize) {
-                showError('파일 크기는 10MB 이하만 업로드 가능합니다.');
-                event.target.value = '';
+        // 날짜 선택기 초기화
+        function initializeDateSelectors() {
+            const uploadMonth = document.getElementById('uploadMonth');
+            const uploadDay = document.getElementById('uploadDay');
+            const filterMonth = document.getElementById('filterMonth');
+            const filterDay = document.getElementById('filterDay');
+
+            uploadMonth.addEventListener('change', () => {
+                updateDayOptions(uploadDay, uploadMonth.value);
+                checkUploadReady();
+            });
+
+            uploadDay.addEventListener('change', checkUploadReady);
+
+            filterMonth.addEventListener('change', () => {
+                updateDayOptions(filterDay, filterMonth.value);
+            });
+        }
+
+        // 일 옵션 업데이트
+        function updateDayOptions(daySelect, month) {
+            daySelect.innerHTML = '<option value="">일 선택</option>';
+            
+            if (!month) {
+                daySelect.innerHTML = '<option value="">전체 일</option>';
                 return;
             }
 
-            hideError();
-        }
-
-        // 파일명에서 날짜 추출
-        function extractDateFromFileName(fileName) {
-            const nameWithoutExt = fileName.replace(/\.[^/.]+$/, "");
-            
-            const patterns = [
-                /(\d{1,2})월\s*(\d{1,2})일/,
-                /(\d{1,2})-(\d{1,2})/,
-                /(\d{1,2})_(\d{1,2})/,
-                /(\d{1,2})(\d{2})(?!\d)/,
-                /(\d{1,2})\.(\d{1,2})/,
-                /(\d{1,2})\s+(\d{1,2})/
-            ];
-
-            for (const pattern of patterns) {
-                const match = nameWithoutExt.match(pattern);
-                if (match) {
-                    let month = parseInt(match[1]);
-                    let day = parseInt(match[2]);
-                    
-                    if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
-                        return { month, day };
-                    }
-                    if (day >= 1 && day <= 12 && month >= 1 && month <= 31) {
-                        return { month: day, day: month };
-                    }
-                }
-            }
-
-            return { month: null, day: null };
-        }
-
-        // 일 옵션 채우기
-        function populateDays() {
-            const daySelect = document.getElementById('daySelect');
-            daySelect.innerHTML = '';
-            for (let i = 1; i <= 31; i++) {
+            const daysInMonth = new Date(2024, month, 0).getDate();
+            for (let i = 1; i <= daysInMonth; i++) {
                 const option = document.createElement('option');
                 option.value = i;
                 option.textContent = `${i}일`;
@@ -361,261 +713,337 @@
             }
         }
 
-        // 가이드 목록 조회
-        async function fetchGuides() {
-            const guideList = document.getElementById('guideList');
-            if (guideList) {
-                guideList.innerHTML = '<div class="empty-state">로딩 중...</div>';
-            }
+        // 오늘 날짜 설정
+        function setTodayDate() {
+            const today = new Date();
+            const month = today.getMonth() + 1;
+            const day = today.getDate();
             
-            try {
-                console.log('가이드 목록 조회 시작...');
-                
-                const { data, error } = await supabase
-                    .from('gift_guides')
-                    .select('*')
-                    .order('month', { ascending: false })
-                    .order('day', { ascending: false });
-
-                if (error) {
-                    console.error('Supabase 조회 오류:', error);
-                    throw error;
-                }
-
-                console.log('조회 성공:', data);
-                guides = data || [];
-                renderGuideList();
-            } catch (error) {
-                console.error('가이드 조회 오류:', error);
-                if (guideList) {
-                    guideList.innerHTML = `
-                        <div class="empty-state">
-                            <p style="color: #dc2626;">조회 중 오류가 발생했습니다</p>
-                            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">
-                                Supabase 테이블을 확인해주세요
-                            </p>
-                            <button onclick="fetchGuides()" style="margin-top: 12px; padding: 6px 12px; background: var(--primary-blue); color: white; border: none; border-radius: 4px; cursor: pointer;">
-                                다시 시도
-                            </button>
-                        </div>
-                    `;
-                }
-            }
+            document.getElementById('uploadMonth').value = month;
+            updateDayOptions(document.getElementById('uploadDay'), month);
+            document.getElementById('uploadDay').value = day;
         }
 
-        // 가이드 목록 렌더링
-        function renderGuideList() {
-            const guideList = document.getElementById('guideList');
+        // 오늘 가이드 보기
+        function showToday() {
+            const today = new Date();
+            const month = today.getMonth() + 1;
+            const day = today.getDate();
             
-            if (guides.length === 0) {
-                guideList.innerHTML = '<div class="empty-state">가이드가 없습니다</div>';
+            document.getElementById('filterMonth').value = month;
+            updateDayOptions(document.getElementById('filterDay'), month);
+            document.getElementById('filterDay').value = day;
+            
+            filterGuides();
+        }
+
+        // 파일 처리
+        function handleFiles(files) {
+            selectedFiles = Array.from(files).filter(file => 
+                file.type === 'image/png' || file.type === 'image/jpeg'
+            );
+            
+            displayFileList();
+            checkUploadReady();
+        }
+
+        // 파일 목록 표시
+        function displayFileList() {
+            const fileList = document.getElementById('fileList');
+            
+            if (selectedFiles.length === 0) {
+                fileList.innerHTML = '';
                 return;
             }
 
-            guideList.innerHTML = guides.map(guide => `
-                <div class="guide-item" onclick="selectGuide('${guide.id}')">
-                    <div style="font-weight: 600; margin-bottom: 4px;">${guide.month}월 ${guide.day}일</div>
-                    <div style="font-size: 14px; color: var(--text-secondary);">사은품 가이드</div>
+            fileList.innerHTML = selectedFiles.map((file, index) => `
+                <div class="file-item">
+                    <span class="file-name">${file.name}</span>
+                    <button class="file-remove" onclick="removeFile(${index})">✕</button>
                 </div>
             `).join('');
         }
 
-        // 가이드 선택
-        function selectGuide(id) {
-            selectedGuide = guides.find(g => g.id === id);
-            if (!selectedGuide) return;
+        // 파일 제거
+        window.removeFile = function(index) {
+            selectedFiles.splice(index, 1);
+            displayFileList();
+            checkUploadReady();
+        }
 
-            // 선택 상태 업데이트
-            document.querySelectorAll('.guide-item').forEach((item, index) => {
-                item.className = guides[index].id === id ? 'guide-item active' : 'guide-item';
-            });
+        // 업로드 가능 상태 체크
+        function checkUploadReady() {
+            const month = document.getElementById('uploadMonth').value;
+            const day = document.getElementById('uploadDay').value;
+            const hasFiles = selectedFiles.length > 0;
+            
+            document.getElementById('confirmUpload').disabled = !(month && day && hasFiles);
+        }
 
-            // 뷰어 업데이트
-            const viewer = document.getElementById('viewer');
-            viewer.innerHTML = `
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                    <h2 style="font-size: 20px; font-weight: 600; color: var(--primary-blue);">${selectedGuide.month}월 ${selectedGuide.day}일 사은품 가이드</h2>
-                    <button onclick="deleteGuide('${selectedGuide.id}')" style="background: #dc2626; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer;">삭제</button>
-                </div>
-                <div class="image-viewer">
-                    ${selectedGuide.image_url ? 
-                        `<img src="${selectedGuide.image_url}" alt="${selectedGuide.month}월 ${selectedGuide.day}일 사은품 가이드">` :
-                        '<div class="empty-state">이미지를 불러올 수 없습니다</div>'
+        // 업로드 모달 열기
+        function openUploadModal() {
+            document.getElementById('uploadModal').classList.add('active');
+            setTodayDate();
+        }
+
+        // 업로드 모달 닫기
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.remove('active');
+            selectedFiles = [];
+            displayFileList();
+            document.getElementById('fileInput').value = '';
+        }
+
+        // 가이드 업로드
+        async function uploadGuides() {
+            const month = document.getElementById('uploadMonth').value;
+            const day = document.getElementById('uploadDay').value;
+            
+            if (!month || !day || selectedFiles.length === 0) return;
+
+            const confirmBtn = document.getElementById('confirmUpload');
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = '업로드 중...';
+
+            try {
+                let successCount = 0;
+
+                for (const file of selectedFiles) {
+                    const timestamp = Date.now();
+                    const fileName = `${month}_${day}_${timestamp}_${file.name}`;
+
+                    // Storage에 업로드
+                    const { data: uploadData, error: uploadError } = await supabase.storage
+                        .from('guide-images')
+                        .upload(fileName, file);
+
+                    if (uploadError) {
+                        console.error('업로드 오류:', uploadError);
+                        continue;
                     }
+
+                    // 공개 URL 가져오기
+                    const { data: { publicUrl } } = supabase.storage
+                        .from('guide-images')
+                        .getPublicUrl(fileName);
+
+                    // 데이터베이스에 저장
+                    const { error: dbError } = await supabase
+                        .from('guides')
+                        .insert({
+                            month: parseInt(month),
+                            day: parseInt(day),
+                            title: `${month}월 ${day}일 사은품 가이드`,
+                            image_url: publicUrl
+                        });
+
+                    if (!dbError) successCount++;
+                }
+
+                if (successCount > 0) {
+                    showMessage(`${successCount}개 가이드가 업로드되었습니다.`, 'success');
+                    closeUploadModal();
+                    await loadGuides();
+                    updateStats();
+                } else {
+                    showMessage('업로드에 실패했습니다.', 'error');
+                }
+                
+            } catch (error) {
+                console.error('업로드 오류:', error);
+                showMessage('업로드 중 오류가 발생했습니다.', 'error');
+            } finally {
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = '업로드';
+                checkUploadReady();
+            }
+        }
+
+        // 가이드 목록 로드
+        async function loadGuides() {
+            try {
+                const { data, error } = await supabase
+                    .from('guides')
+                    .select('*')
+                    .order('month', { ascending: false })
+                    .order('day', { ascending: false })
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                allGuides = data || [];
+                filterGuides();
+                
+            } catch (error) {
+                console.error('로드 오류:', error);
+                showMessage('가이드 로드 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        // 가이드 필터링
+        function filterGuides() {
+            const filterMonth = document.getElementById('filterMonth').value;
+            const filterDay = document.getElementById('filterDay').value;
+            
+            filteredGuides = allGuides;
+            
+            if (filterMonth) {
+                filteredGuides = filteredGuides.filter(g => g.month == filterMonth);
+            }
+            
+            if (filterDay) {
+                filteredGuides = filteredGuides.filter(g => g.day == filterDay);
+            }
+            
+            displayGuides(filteredGuides);
+        }
+
+        // 가이드 표시
+        function displayGuides(guides) {
+            const grid = document.getElementById('guideGrid');
+            
+            if (guides.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📄</div>
+                        <div>가이드가 없습니다</div>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = guides.map((guide, index) => `
+                <div class="guide-card" onclick="openViewer(${index})">
+                    <img src="${guide.image_url}" alt="${guide.title}" loading="lazy">
+                    <div class="guide-info">
+                        <span class="guide-date">${guide.month}월 ${guide.day}일</span>
+                        <button class="delete-btn" onclick="deleteGuide('${guide.id}', event)">🗑️</button>
+                    </div>
                 </div>
-            `;
+            `).join('');
+        }
+
+        // 뷰어 열기
+        window.openViewer = function(index) {
+            currentImageIndex = index;
+            const guide = filteredGuides[index];
+            document.getElementById('viewerImage').src = guide.image_url;
+            document.getElementById('viewerModal').classList.add('active');
+            updateViewerNav();
+        }
+
+        // 뷰어 닫기
+        function closeViewerModal() {
+            document.getElementById('viewerModal').classList.remove('active');
+        }
+
+        // 이전 이미지
+        function showPrevImage() {
+            if (currentImageIndex > 0) {
+                currentImageIndex--;
+                const guide = filteredGuides[currentImageIndex];
+                document.getElementById('viewerImage').src = guide.image_url;
+                updateViewerNav();
+            }
+        }
+
+        // 다음 이미지
+        function showNextImage() {
+            if (currentImageIndex < filteredGuides.length - 1) {
+                currentImageIndex++;
+                const guide = filteredGuides[currentImageIndex];
+                document.getElementById('viewerImage').src = guide.image_url;
+                updateViewerNav();
+            }
+        }
+
+        // 뷰어 네비게이션 업데이트
+        function updateViewerNav() {
+            document.getElementById('viewerPrev').style.display = 
+                currentImageIndex > 0 ? 'block' : 'none';
+            document.getElementById('viewerNext').style.display = 
+                currentImageIndex < filteredGuides.length - 1 ? 'block' : 'none';
         }
 
         // 가이드 삭제
-        async function deleteGuide(id) {
+        window.deleteGuide = async function(id, event) {
+            event.stopPropagation();
+            
             if (!confirm('이 가이드를 삭제하시겠습니까?')) return;
 
             try {
-                const guide = guides.find(g => g.id === id);
-                
-                // 이미지 파일 삭제
-                if (guide.image_url) {
+                const guide = allGuides.find(g => g.id === id);
+                if (guide && guide.image_url) {
                     const fileName = guide.image_url.split('/').pop();
-                    if (fileName && fileName.includes('gift-guide-images')) {
-                        try {
-                            await supabase.storage
-                                .from('gift-guide-images')
-                                .remove([fileName]);
-                        } catch (storageError) {
-                            console.warn('Storage 파일 삭제 오류:', storageError);
-                        }
-                    }
+                    await supabase.storage
+                        .from('guide-images')
+                        .remove([fileName]);
                 }
 
-                // 데이터베이스에서 삭제
                 const { error } = await supabase
-                    .from('gift_guides')
+                    .from('guides')
                     .delete()
                     .eq('id', id);
 
                 if (error) throw error;
 
-                await fetchGuides();
-                selectedGuide = null;
-                document.getElementById('viewer').innerHTML = '<div class="empty-state"><p>가이드를 선택하여 이미지를 확인하세요</p></div>';
+                showMessage('가이드가 삭제되었습니다.', 'success');
+                await loadGuides();
+                updateStats();
                 
             } catch (error) {
                 console.error('삭제 오류:', error);
-                alert('삭제 중 오류가 발생했습니다.');
+                showMessage('삭제 중 오류가 발생했습니다.', 'error');
             }
         }
 
-        // 모달 표시/숨기기
-        function showModal() {
+        // 통계 업데이트
+        function updateStats() {
             const today = new Date();
-            document.getElementById('monthSelect').value = today.getMonth() + 1;
-            populateDays();
-            document.getElementById('daySelect').value = today.getDate();
+            const todayGuides = allGuides.filter(g => 
+                g.month === today.getMonth() + 1 && g.day === today.getDate()
+            );
             
-            document.getElementById('uploadModal').classList.add('show');
+            document.getElementById('totalCount').textContent = allGuides.length;
+            document.getElementById('todayCount').textContent = todayGuides.length;
         }
 
-        function hideModal() {
-            document.getElementById('uploadModal').classList.remove('show');
-            document.getElementById('fileInput').value = '';
-            document.getElementById('uploadStatus').style.display = 'none';
-            document.getElementById('autoDetected').style.display = 'none';
-            hideError();
-        }
-
-        // 오류 메시지 표시/숨기기
-        function showError(message) {
-            const errorEl = document.getElementById('uploadError');
-            if (errorEl) {
-                errorEl.textContent = message;
-                errorEl.style.display = 'block';
-            }
-        }
-
-        function hideError() {
-            const errorEl = document.getElementById('uploadError');
-            if (errorEl) {
-                errorEl.style.display = 'none';
-            }
-        }
-
-        // 파일 업로드
-        async function handleUpload() {
-            const file = document.getElementById('fileInput').files[0];
-            if (!file) {
-                showError('이미지를 선택해주세요.');
-                return;
-            }
-
-            const uploadBtn = document.getElementById('uploadBtn');
-            const uploadStatus = document.getElementById('uploadStatus');
+        // 메시지 표시
+        function showMessage(text, type) {
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.textContent = text;
+            document.body.appendChild(message);
             
-            uploadBtn.disabled = true;
-            uploadStatus.style.display = 'block';
-            uploadStatus.textContent = '업로드 중...';
-            uploadStatus.style.color = 'var(--primary-blue)';
-            hideError();
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
+        }
 
+        // 테이블 자동 생성
+        async function initDatabase() {
             try {
-                const month = parseInt(document.getElementById('monthSelect').value);
-                const day = parseInt(document.getElementById('daySelect').value);
-                const timestamp = Date.now();
-                const fileName = `${month}_${day}_${timestamp}_${file.name}`;
-
-                console.log('업로드 시작:', fileName);
-
-                // Storage 업로드 (더 많은 옵션으로 시도)
-                const { data: uploadData, error: uploadError } = await supabase.storage
-                    .from('gift-guide-images')
-                    .upload(fileName, file, {
-                        cacheControl: '3600',
-                        upsert: false,
-                        duplex: 'half'
-                    });
-
-                if (uploadError) {
-                    console.error('Storage 업로드 오류:', uploadError);
-                    
-                    // 다른 방법으로 재시도
-                    const { data: retryData, error: retryError } = await supabase.storage
-                        .from('gift-guide-images')
-                        .upload(fileName, file);
-                    
-                    if (retryError) {
-                        throw new Error(`이미지 업로드 실패: ${retryError.message}`);
-                    }
-                }
-
-                console.log('Storage 업로드 성공');
-
-                // 공개 URL 가져오기
-                const { data: { publicUrl } } = supabase.storage
-                    .from('gift-guide-images')
-                    .getPublicUrl(fileName);
-
-                console.log('공개 URL:', publicUrl);
-
-                // DB 저장
-                const { data: dbData, error: dbError } = await supabase
-                    .from('gift_guides')
-                    .insert({ 
-                        month: month, 
-                        day: day, 
-                        image_url: publicUrl 
-                    })
-                    .select();
-
-                if (dbError) {
-                    console.error('DB 저장 오류:', dbError);
-                    throw new Error(`데이터 저장 실패: ${dbError.message}`);
-                }
-
-                console.log('DB 저장 성공:', dbData);
-
-                hideModal();
-                await fetchGuides();
-                alert('가이드가 업로드되었습니다.');
-
-            } catch (error) {
-                console.error('업로드 오류:', error);
-                uploadStatus.textContent = `오류: ${error.message}`;
-                uploadStatus.style.color = '#dc2626';
-                
-                // Storage 권한 오류일 때 도움말 표시
-                if (error.message.includes('signature verification failed') || 
-                    error.message.includes('unauthorized')) {
-                    showError('Storage 권한 오류입니다. Supabase Storage 정책을 확인해주세요.');
-                } else {
-                    showError(error.message);
-                }
-            } finally {
-                uploadBtn.disabled = false;
+                // 테이블이 없으면 생성
+                const { error } = await supabase.rpc('exec_sql', {
+                    sql: `
+                        CREATE TABLE IF NOT EXISTS guides (
+                            id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+                            month INTEGER NOT NULL,
+                            day INTEGER NOT NULL,
+                            title TEXT NOT NULL,
+                            image_url TEXT,
+                            created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+                        );
+                        CREATE INDEX IF NOT EXISTS idx_guides_month_day ON guides(month, day);
+                    `
+                });
+            } catch (e) {
+                console.log('테이블 확인/생성 시도');
             }
         }
 
-        // 초기화
-        document.addEventListener('DOMContentLoaded', init);
-        document.getElementById('monthSelect').addEventListener('change', populateDays);
+        // 초기 DB 설정
+        initDatabase();
     </script>
 </body>
 </html>
