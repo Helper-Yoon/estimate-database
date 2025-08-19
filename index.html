@@ -298,92 +298,6 @@
             gap: 20px;
         }
 
-        /* 도움말 모달 */
-        .help-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .help-modal.active {
-            display: flex;
-        }
-
-        .help-content {
-            background: #0a0a0a;
-            border: 2px solid #1976d2;
-            border-radius: 12px;
-            padding: 30px;
-            width: 90%;
-            max-width: 600px;
-        }
-
-        .help-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .help-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #1976d2;
-        }
-
-        .close-help {
-            background: transparent;
-            border: none;
-            color: #666;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 0;
-            width: 30px;
-            height: 30px;
-        }
-
-        .close-help:hover {
-            color: #fff;
-        }
-
-        .help-steps {
-            margin-bottom: 30px;
-        }
-
-        .help-step {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #1a1a1a;
-            border-radius: 8px;
-            border: 1px solid #333;
-        }
-
-        .step-icon {
-            font-size: 24px;
-            margin-right: 15px;
-            min-width: 40px;
-        }
-
-        .step-text {
-            color: #fff;
-            font-size: 16px;
-            line-height: 1.5;
-        }
-
-        .help-actions {
-            display: flex;
-            gap: 15px;
-        }
-
         /* 업로드 모달 */
         .upload-modal {
             display: none;
@@ -408,18 +322,20 @@
             border-radius: 12px;
             padding: 30px;
             width: 90%;
-            max-width: 500px;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .upload-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .upload-title {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 600;
             color: #1976d2;
         }
@@ -437,6 +353,42 @@
 
         .close-upload:hover {
             color: #fff;
+        }
+
+        /* 도움말 섹션 */
+        .help-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(25, 118, 210, 0.05);
+            border: 1px solid rgba(25, 118, 210, 0.2);
+            border-radius: 8px;
+        }
+
+        .help-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .help-step {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #1a1a1a;
+            border-radius: 6px;
+            border: 1px solid #333;
+        }
+
+        .step-icon {
+            font-size: 20px;
+            margin-right: 12px;
+            min-width: 35px;
+        }
+
+        .step-text {
+            color: #fff;
+            font-size: 14px;
+            line-height: 1.4;
         }
 
         .drop-zone {
@@ -678,6 +630,16 @@
                 padding: 8px 16px;
                 font-size: 14px;
             }
+
+            .help-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .upload-content {
+                width: 95%;
+                max-width: none;
+                padding: 20px;
+            }
         }
     </style>
 </head>
@@ -726,49 +688,37 @@
         </div>
     </div>
 
-    <!-- 도움말 모달 -->
-    <div class="help-modal" id="helpModal">
-        <div class="help-content">
-            <div class="help-header">
-                <div class="help-title">📊 가이드 업로드 방법</div>
-                <button class="close-help" id="closeHelp">&times;</button>
-            </div>
-            
-            <div class="help-steps">
-                <div class="help-step">
-                    <div class="step-icon">💻</div>
-                    <div class="step-text">웍스에서 가이드 다운로드</div>
-                </div>
-                
-                <div class="help-step">
-                    <div class="step-icon">📁</div>
-                    <div class="step-text">폴더 열기를 누르고 가이드 파일을 찾기</div>
-                </div>
-                
-                <div class="help-step">
-                    <div class="step-icon">✏️</div>
-                    <div class="step-text">날짜로 이름을 바꾸기 (예: 250801)</div>
-                </div>
-                
-                <div class="help-step">
-                    <div class="step-icon">⬆️</div>
-                    <div class="step-text">업로드하면 자동으로 해당 날짜로 등록됩니다! 🎉</div>
-                </div>
-            </div>
-
-            <div class="help-actions">
-                <button class="btn btn-secondary" id="cancelHelp">취소</button>
-                <button class="btn btn-primary" id="startUpload">✨ 업로드하기</button>
-            </div>
-        </div>
-    </div>
-
     <!-- 업로드 모달 -->
     <div class="upload-modal" id="uploadModal">
         <div class="upload-content">
             <div class="upload-header">
-                <div class="upload-title">가이드 업로드</div>
+                <div class="upload-title">📊 가이드 업로드</div>
                 <button class="close-upload" id="closeUpload">&times;</button>
+            </div>
+
+            <!-- 도움말 섹션 -->
+            <div class="help-section">
+                <div class="help-steps">
+                    <div class="help-step">
+                        <div class="step-icon">💻</div>
+                        <div class="step-text">웍스에서 가이드 다운로드</div>
+                    </div>
+                    
+                    <div class="help-step">
+                        <div class="step-icon">📁</div>
+                        <div class="step-text">폴더 열기를 누르고 가이드 파일을 찾기</div>
+                    </div>
+                    
+                    <div class="help-step">
+                        <div class="step-icon">✏️</div>
+                        <div class="step-text">날짜로 이름을 바꾸기 (예: 250801)</div>
+                    </div>
+                    
+                    <div class="help-step">
+                        <div class="step-icon">⬆️</div>
+                        <div class="step-text">업로드하면 자동으로 해당 날짜로 등록됩니다! 🎉</div>
+                    </div>
+                </div>
             </div>
 
             <div class="drop-zone" id="dropZone">
@@ -849,15 +799,7 @@
         function setupEventListeners() {
             // 헤더 버튼들
             document.getElementById('dateTrigger').addEventListener('click', toggleCalendar);
-            document.getElementById('uploadTrigger').addEventListener('click', showHelpModal);
-            
-            // 도움말 모달
-            document.getElementById('closeHelp').addEventListener('click', closeHelpModal);
-            document.getElementById('cancelHelp').addEventListener('click', closeHelpModal);
-            document.getElementById('startUpload').addEventListener('click', () => {
-                closeHelpModal();
-                openUploadModal();
-            });
+            document.getElementById('uploadTrigger').addEventListener('click', openUploadModal);
             
             // 업로드 모달
             document.getElementById('closeUpload').addEventListener('click', closeUploadModal);
@@ -1038,16 +980,6 @@
         function checkUploadReady() {
             const hasValidFiles = selectedFiles.some(item => item.dateInfo !== null);
             document.getElementById('confirmUpload').disabled = !hasValidFiles;
-        }
-
-        // 도움말 모달 열기
-        function showHelpModal() {
-            document.getElementById('helpModal').classList.add('active');
-        }
-
-        // 도움말 모달 닫기
-        function closeHelpModal() {
-            document.getElementById('helpModal').classList.remove('active');
         }
 
         // 업로드 모달 열기
