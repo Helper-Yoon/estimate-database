@@ -150,6 +150,29 @@
             .main-grid { grid-template-columns: 1fr; }
             .container { padding: 0 16px; }
         }
+
+        .auto-detected {
+            margin-top: 8px;
+            padding: 8px;
+            background: var(--bg-primary);
+            border-radius: 6px;
+            font-size: 14px;
+            color: var(--primary-blue);
+            display: none;
+        }
+
+        .upload-status {
+            margin-top: 20px;
+            text-align: center;
+            color: var(--primary-blue);
+            display: none;
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 14px;
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body>
@@ -222,6 +245,10 @@
             <div class="form-group">
                 <label class="form-label">이미지 파일</label>
                 <input type="file" id="fileInput" accept="image/*" class="form-input">
+                <div id="autoDetected" class="auto-detected">
+                    📅 파일명에서 자동 감지됨
+                </div>
+                <div id="uploadError" class="error-message" style="display: none;"></div>
             </div>
 
             <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 32px;">
@@ -229,7 +256,7 @@
                 <button id="uploadBtn" class="btn-primary" onclick="handleUpload()">업로드</button>
             </div>
             
-            <div id="uploadStatus" style="display: none; text-align: center; margin-top: 20px; color: var(--primary-blue);">업로드 중...</div>
+            <div id="uploadStatus" class="upload-status">업로드 중...</div>
         </div>
     </div>
 
@@ -279,26 +306,28 @@
                     }, 3000);
                 }
             }
+
+            // 파일 크기 체크 (10MB 제한)
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            if (file.size > maxSize) {
+                showError('파일 크기는 10MB 이하만 업로드 가능합니다.');
+                event.target.value = '';
+                return;
+            }
+
+            hideError();
         }
 
         // 파일명에서 날짜 추출
         function extractDateFromFileName(fileName) {
-            // 파일 확장자 제거
             const nameWithoutExt = fileName.replace(/\.[^/.]+$/, "");
             
-            // 다양한 패턴으로 월/일 추출
             const patterns = [
-                // "8월19일", "08월19일" 형태
                 /(\d{1,2})월\s*(\d{1,2})일/,
-                // "8-19", "08-19" 형태  
                 /(\d{1,2})-(\d{1,2})/,
-                // "8_19", "08_19" 형태
                 /(\d{1,2})_(\d{1,2})/,
-                // "0819", "819" 형태 (4자리 또는 3자리)
                 /(\d{1,2})(\d{2})(?!\d)/,
-                // "8.19" 형태
                 /(\d{1,2})\.(\d{1,2})/,
-                // "8 19" 형태 (공백)
                 /(\d{1,2})\s+(\d{1,2})/
             ];
 
@@ -308,12 +337,9 @@
                     let month = parseInt(match[1]);
                     let day = parseInt(match[2]);
                     
-                    // 월/일 범위 검증
                     if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
                         return { month, day };
                     }
-                    
-                    // 순서가 바뀐 경우도 체크 (일이 월보다 클 때)
                     if (day >= 1 && day <= 12 && month >= 1 && month <= 31) {
                         return { month: day, day: month };
                     }
@@ -337,19 +363,43 @@
 
         // 가이드 목록 조회
         async function fetchGuides() {
+            const guideList = document.getElementById('guideList');
+            if (guideList) {
+                guideList.innerHTML = '<div class="empty-state">로딩 중...</div>';
+            }
+            
             try {
+                console.log('가이드 목록 조회 시작...');
+                
                 const { data, error } = await supabase
                     .from('gift_guides')
                     .select('*')
                     .order('month', { ascending: false })
                     .order('day', { ascending: false });
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Supabase 조회 오류:', error);
+                    throw error;
+                }
+
+                console.log('조회 성공:', data);
                 guides = data || [];
                 renderGuideList();
             } catch (error) {
                 console.error('가이드 조회 오류:', error);
-                document.getElementById('guideList').innerHTML = '<div class="empty-state">조회 중 오류가 발생했습니다</div>';
+                if (guideList) {
+                    guideList.innerHTML = `
+                        <div class="empty-state">
+                            <p style="color: #dc2626;">조회 중 오류가 발생했습니다</p>
+                            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">
+                                Supabase 테이블을 확인해주세요
+                            </p>
+                            <button onclick="fetchGuides()" style="margin-top: 12px; padding: 6px 12px; background: var(--primary-blue); color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                다시 시도
+                            </button>
+                        </div>
+                    `;
+                }
             }
         }
 
@@ -406,13 +456,23 @@
                 // 이미지 파일 삭제
                 if (guide.image_url) {
                     const fileName = guide.image_url.split('/').pop();
-                    if (fileName) {
-                        await supabase.storage.from('gift-guide-images').remove([fileName]);
+                    if (fileName && fileName.includes('gift-guide-images')) {
+                        try {
+                            await supabase.storage
+                                .from('gift-guide-images')
+                                .remove([fileName]);
+                        } catch (storageError) {
+                            console.warn('Storage 파일 삭제 오류:', storageError);
+                        }
                     }
                 }
 
                 // 데이터베이스에서 삭제
-                const { error } = await supabase.from('gift_guides').delete().eq('id', id);
+                const { error } = await supabase
+                    .from('gift_guides')
+                    .delete()
+                    .eq('id', id);
+
                 if (error) throw error;
 
                 await fetchGuides();
@@ -427,7 +487,6 @@
 
         // 모달 표시/숨기기
         function showModal() {
-            // 현재 날짜로 초기화
             const today = new Date();
             document.getElementById('monthSelect').value = today.getMonth() + 1;
             populateDays();
@@ -440,10 +499,23 @@
             document.getElementById('uploadModal').classList.remove('show');
             document.getElementById('fileInput').value = '';
             document.getElementById('uploadStatus').style.display = 'none';
-            
-            const autoDetectedEl = document.getElementById('autoDetected');
-            if (autoDetectedEl) {
-                autoDetectedEl.style.display = 'none';
+            document.getElementById('autoDetected').style.display = 'none';
+            hideError();
+        }
+
+        // 오류 메시지 표시/숨기기
+        function showError(message) {
+            const errorEl = document.getElementById('uploadError');
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.style.display = 'block';
+            }
+        }
+
+        function hideError() {
+            const errorEl = document.getElementById('uploadError');
+            if (errorEl) {
+                errorEl.style.display = 'none';
             }
         }
 
@@ -451,7 +523,7 @@
         async function handleUpload() {
             const file = document.getElementById('fileInput').files[0];
             if (!file) {
-                alert('이미지를 선택해주세요.');
+                showError('이미지를 선택해주세요.');
                 return;
             }
 
@@ -461,6 +533,8 @@
             uploadBtn.disabled = true;
             uploadStatus.style.display = 'block';
             uploadStatus.textContent = '업로드 중...';
+            uploadStatus.style.color = 'var(--primary-blue)';
+            hideError();
 
             try {
                 const month = parseInt(document.getElementById('monthSelect').value);
@@ -470,20 +544,29 @@
 
                 console.log('업로드 시작:', fileName);
 
-                // Storage 업로드
+                // Storage 업로드 (더 많은 옵션으로 시도)
                 const { data: uploadData, error: uploadError } = await supabase.storage
                     .from('gift-guide-images')
                     .upload(fileName, file, {
                         cacheControl: '3600',
-                        upsert: false
+                        upsert: false,
+                        duplex: 'half'
                     });
 
                 if (uploadError) {
                     console.error('Storage 업로드 오류:', uploadError);
-                    throw new Error(`이미지 업로드 실패: ${uploadError.message}`);
+                    
+                    // 다른 방법으로 재시도
+                    const { data: retryData, error: retryError } = await supabase.storage
+                        .from('gift-guide-images')
+                        .upload(fileName, file);
+                    
+                    if (retryError) {
+                        throw new Error(`이미지 업로드 실패: ${retryError.message}`);
+                    }
                 }
 
-                console.log('Storage 업로드 성공:', uploadData);
+                console.log('Storage 업로드 성공');
 
                 // 공개 URL 가져오기
                 const { data: { publicUrl } } = supabase.storage
@@ -517,10 +600,14 @@
                 console.error('업로드 오류:', error);
                 uploadStatus.textContent = `오류: ${error.message}`;
                 uploadStatus.style.color = '#dc2626';
-                setTimeout(() => {
-                    uploadStatus.style.display = 'none';
-                    uploadStatus.style.color = 'var(--primary-blue)';
-                }, 5000);
+                
+                // Storage 권한 오류일 때 도움말 표시
+                if (error.message.includes('signature verification failed') || 
+                    error.message.includes('unauthorized')) {
+                    showError('Storage 권한 오류입니다. Supabase Storage 정책을 확인해주세요.');
+                } else {
+                    showError(error.message);
+                }
             } finally {
                 uploadBtn.disabled = false;
             }
