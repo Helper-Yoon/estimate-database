@@ -1155,6 +1155,12 @@
 
         // 섹션 전환
         function switchSection(section) {
+            // sim_guides 테이블이 없으면 유심가이드 섹션 전환 방지
+            if (section === 'sim' && allSimGuides.length === 0) {
+                showMessage('sim_guides 테이블을 먼저 생성해주세요.', 'error');
+                return;
+            }
+            
             currentSection = section;
             
             // 탭 버튼 업데이트
@@ -1584,12 +1590,34 @@
 
                 if (error) {
                     console.error('❌ 유심가이드 로드 오류:', error);
+                    
+                    if (error.code === 'PGRST116') {
+                        console.log('📱 sim_guides 테이블이 존재하지 않습니다. 유심가이드 기능이 비활성화됩니다.');
+                        // 유심가이드 탭 비활성화
+                        const simTab = document.getElementById('simTab');
+                        if (simTab) {
+                            simTab.disabled = true;
+                            simTab.style.opacity = '0.5';
+                            simTab.style.cursor = 'not-allowed';
+                            simTab.title = 'sim_guides 테이블을 먼저 생성해주세요';
+                        }
+                    }
+                    
                     allSimGuides = [];
                     return;
                 }
 
                 allSimGuides = data || [];
                 console.log(`✅ 총 ${allSimGuides.length}개 유심가이드 로드 완료`);
+                
+                // 유심가이드 탭 활성화
+                const simTab = document.getElementById('simTab');
+                if (simTab) {
+                    simTab.disabled = false;
+                    simTab.style.opacity = '1';
+                    simTab.style.cursor = 'pointer';
+                    simTab.title = '';
+                }
                 
             } catch (error) {
                 console.error('❌ 유심가이드 로드 프로세스 오류:', error);
@@ -1675,8 +1703,12 @@
                 simGuidesEl.innerHTML = `
                     <div class="no-guides">
                         <div class="no-guides-icon">📱</div>
-                        <div class="no-guides-text">등록된 유심가이드가 없습니다</div>
-                        <button class="upload-in-empty" onclick="openUploadModal()">+ 유심가이드 업로드</button>
+                        <div class="no-guides-text">
+                            sim_guides 테이블을 먼저 생성해주세요<br>
+                            <small style="color: #666; margin-top: 10px; display: block;">
+                                Supabase에서 sim_guides 테이블 생성 후 페이지를 새로고침하세요
+                            </small>
+                        </div>
                     </div>
                 `;
                 return;
@@ -1964,6 +1996,16 @@
 📁 4. Storage에서 'guide-images' 버킷 생성:
    - Public bucket 체크
    - 이미지 파일 업로드 허용
+
+💡 SQL로 한번에 생성하려면:
+CREATE TABLE public.sim_guides (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  month integer NOT NULL,
+  day integer NOT NULL,
+  title text NOT NULL,
+  image_url text,
+  created_at timestamp with time zone DEFAULT now()
+);
 
 설정 후 페이지를 새로고침하세요.
             `;
