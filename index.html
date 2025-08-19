@@ -70,6 +70,36 @@
             padding: 40px 20px;
         }
 
+        /* 경고 메시지 스타일 */
+        .date-warning {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: #fff;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+            animation: fadeInWarning 0.5s ease;
+            display: none;
+        }
+
+        .date-warning.show {
+            display: block;
+        }
+
+        @keyframes fadeInWarning {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .today-section {
             text-align: center;
             margin-bottom: 40px;
@@ -86,6 +116,12 @@
             font-size: 16px;
             color: #aaa;
             margin-bottom: 30px;
+        }
+
+        .kst-time {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
         }
 
         .today-guides {
@@ -127,6 +163,22 @@
             font-size: 12px;
             color: #1976d2;
             display: none;
+        }
+
+        .guide-date-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(25, 118, 210, 0.9);
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .guide-date-badge.old {
+            background: rgba(255, 107, 53, 0.9);
         }
 
         .delete-btn {
@@ -655,9 +707,15 @@
     </div>
 
     <div class="main-container">
+        <!-- 날짜 경고 메시지 -->
+        <div class="date-warning" id="dateWarning">
+            ⚠️ 당일 가이드가 아닙니다. 안내에 유의해 주세요.
+        </div>
+
         <!-- 오늘의 견적서 -->
         <div class="today-section">
             <div class="today-date" id="todayDate">2025년 8월 19일</div>
+            <div class="kst-time" id="kstTime">KST 기준</div>
             <div class="today-subtitle">당일 가이드</div>
             
             <div class="today-guides" id="todayGuides">
@@ -764,6 +822,36 @@
         let currentViewImages = [];
         let isCalendarVisible = false;
 
+        // KST 기준 날짜 함수들
+        function getKSTDate() {
+            const now = new Date();
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const kst = new Date(utc + (9 * 3600000)); // UTC+9
+            return kst;
+        }
+
+        function formatKSTDateTime(date) {
+            return date.toLocaleString('ko-KR', {
+                timeZone: 'Asia/Seoul',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        function isSameDate(date1, date2) {
+            return date1.getFullYear() === date2.getFullYear() &&
+                   date1.getMonth() === date2.getMonth() &&
+                   date1.getDate() === date2.getDate();
+        }
+
+        function getGuideDate(guide) {
+            return new Date(guide.year, guide.month - 1, guide.day);
+        }
+
         // 초기화
         document.addEventListener('DOMContentLoaded', () => {
             initializeApp();
@@ -857,18 +945,6 @@
             });
         }
 
-        // 디버그 정보 표시 (비활성화됨)
-        async function showDebugInfo() {
-            // 디버그 기능이 비활성화되었습니다
-            return;
-        }
-
-        // Storage 파일과 DB 매칭 복구 시도 (비활성화됨)
-        async function repairStorageDbMatch() {
-            // 복구 기능이 비활성화되었습니다
-            return;
-        }
-
         // 달력 토글
         function toggleCalendar() {
             const calendarSection = document.getElementById('calendarSection');
@@ -889,11 +965,14 @@
             }
         }
 
-        // 오늘 날짜 업데이트
+        // 오늘 날짜 업데이트 (KST 기준)
         function updateTodayDate() {
-            const today = new Date();
+            const today = getKSTDate();
             const dateStr = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일`;
+            const timeStr = formatKSTDateTime(today);
+            
             document.getElementById('todayDate').textContent = dateStr;
+            document.getElementById('kstTime').textContent = `${timeStr}`;
         }
 
         // 파일명에서 날짜 추출
@@ -1049,7 +1128,7 @@
                     const { data: dbData, error: dbError } = await supabaseClient
                         .from('guides')
                         .insert(insertData)
-                        .select(); // 반환된 데이터도 확인
+                        .select();
 
                     if (dbError) {
                         console.error('❌ 데이터베이스 오류:', dbError);
@@ -1147,14 +1226,38 @@
             }
         }
 
-        // 오늘의 가이드 표시
+        // 가이드 날짜 확인 및 경고 표시
+        function checkDateWarning(guides) {
+            const today = getKSTDate();
+            const warningEl = document.getElementById('dateWarning');
+            
+            // 당일이 아닌 가이드가 있는지 확인
+            const hasNonTodayGuides = guides.some(guide => {
+                const guideDate = getGuideDate(guide);
+                return !isSameDate(guideDate, today);
+            });
+            
+            if (hasNonTodayGuides) {
+                warningEl.classList.add('show');
+            } else {
+                warningEl.classList.remove('show');
+            }
+        }
+
+        // 오늘의 가이드 표시 (최신순으로 정렬, 날짜 확인)
         function showTodayGuides() {
-            const today = new Date();
-            const todayGuides = allGuides.filter(guide => 
+            const today = getKSTDate();
+            let todayGuides = allGuides.filter(guide => 
                 guide.year === today.getFullYear() && 
                 guide.month === today.getMonth() + 1 && 
                 guide.day === today.getDate()
             );
+            
+            // 당일 가이드가 없으면 가장 최근 가이드 하나를 표시
+            if (todayGuides.length === 0) {
+                // 최근 1개 가이드를 표시
+                todayGuides = allGuides.slice(0, 1);
+            }
             
             const todayGuidesEl = document.getElementById('todayGuides');
             
@@ -1162,22 +1265,31 @@
                 todayGuidesEl.innerHTML = `
                     <div class="no-guides">
                         <div class="no-guides-icon">📊</div>
-                        <div>오늘 등록된 가이드가 없습니다</div>
+                        <div>등록된 가이드가 없습니다</div>
                     </div>
                 `;
                 return;
             }
 
+            // 날짜 경고 확인
+            checkDateWarning(todayGuides);
+
             todayGuidesEl.innerHTML = todayGuides.map((guide, index) => {
+                const guideDate = getGuideDate(guide);
+                const isToday = isSameDate(guideDate, today);
+                const dateText = `${guide.month}/${guide.day}`;
+                const badgeClass = isToday ? '' : 'old';
+                
                 return `
                     <div class="guide-image" onclick="openViewer([${todayGuides.map(g => allGuides.indexOf(g)).join(',')}], ${index})">
                         <img src="${guide.image_url}" alt="${guide.title}" loading="lazy">
+                        <div class="guide-date-badge ${badgeClass}">${dateText}</div>
                     </div>
                 `;
             }).join('');
         }
 
-        // 캘린더 업데이트
+        // 캘린더 업데이트 (KST 기준)
         function updateCalendar() {
             const calendarTitle = document.getElementById('calendarTitle');
             const calendarGrid = document.getElementById('calendarGrid');
@@ -1186,7 +1298,7 @@
             
             const firstDay = new Date(currentViewDate.getFullYear(), currentViewDate.getMonth(), 1);
             const lastDay = new Date(currentViewDate.getFullYear(), currentViewDate.getMonth() + 1, 0);
-            const today = new Date();
+            const today = getKSTDate();
             
             let html = '';
             
@@ -1210,9 +1322,7 @@
                     guide.day === day
                 );
                 
-                const isToday = today.getFullYear() === date.getFullYear() && 
-                               today.getMonth() === date.getMonth() && 
-                               today.getDate() === day;
+                const isToday = isSameDate(today, date);
                 
                 let classes = 'calendar-day';
                 if (hasData) classes += ' has-data';
@@ -1250,10 +1360,25 @@
             
             selectedDateTitle.textContent = `${year}년 ${month}월 ${day}일 가이드`;
             
+            // 선택된 날짜의 가이드들에 대한 날짜 경고 확인
+            const today = getKSTDate();
+            const selectedDate = new Date(year, month - 1, day);
+            const isSelectedToday = isSameDate(selectedDate, today);
+            
+            if (!isSelectedToday) {
+                document.getElementById('dateWarning').classList.add('show');
+            } else {
+                document.getElementById('dateWarning').classList.remove('show');
+            }
+            
             selectedGuidesGrid.innerHTML = selectedGuides.map((guide, index) => {
+                const dateText = `${guide.month}/${guide.day}`;
+                const badgeClass = isSelectedToday ? '' : 'old';
+                
                 return `
                     <div class="guide-image" onclick="openViewer([${selectedGuides.map(g => allGuides.indexOf(g)).join(',')}], ${index})">
                         <img src="${guide.image_url}" alt="${guide.title}" loading="lazy">
+                        <div class="guide-date-badge ${badgeClass}">${dateText}</div>
                     </div>
                 `;
             }).join('');
