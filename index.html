@@ -29,7 +29,7 @@
         }
 
         .header-content {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -37,7 +37,7 @@
         }
 
         h1 {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
             color: #1976d2;
         }
@@ -57,6 +57,7 @@
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+            font-size: 14px;
         }
 
         .upload-trigger:hover, .date-trigger:hover {
@@ -65,7 +66,7 @@
         }
 
         .main-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 40px 20px;
         }
@@ -106,14 +107,14 @@
         }
 
         .today-date {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: 700;
             color: #1976d2;
             margin-bottom: 10px;
         }
 
         .today-subtitle {
-            font-size: 16px;
+            font-size: 18px;
             color: #aaa;
             margin-bottom: 30px;
         }
@@ -124,11 +125,45 @@
             margin-bottom: 20px;
         }
 
+        .section-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .tab-button {
+            background: #1a1a1a;
+            border: 2px solid #333;
+            color: #666;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+            border-color: #1976d2;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(25, 118, 210, 0.3);
+        }
+
+        .tab-button:hover:not(.active) {
+            border-color: #1976d2;
+            color: #1976d2;
+        }
+
         .today-guides {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 25px;
             margin-top: 30px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .guide-image {
@@ -153,25 +188,13 @@
             display: block;
         }
 
-        .guide-overlay {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 6px;
-            padding: 8px 12px;
-            font-size: 12px;
-            color: #1976d2;
-            display: none;
-        }
-
         .guide-date-badge {
             position: absolute;
             top: 10px;
             left: 10px;
             background: rgba(25, 118, 210, 0.9);
             color: #fff;
-            padding: 6px 10px;
+            padding: 6px 12px;
             border-radius: 4px;
             font-size: 12px;
             font-weight: 600;
@@ -181,43 +204,43 @@
             background: rgba(255, 107, 53, 0.9);
         }
 
-        .delete-btn {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            border: none;
-            color: #666;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: all 0.2s;
-            font-size: 16px;
-            width: 36px;
-            height: 36px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .delete-btn:hover {
-            color: #ff4444;
-            background: rgba(255, 68, 68, 0.2);
-        }
-
         .no-guides {
             background: #1a1a1a;
             border: 2px dashed #333;
             border-radius: 12px;
-            padding: 60px 20px;
+            padding: 80px 20px;
             text-align: center;
             color: #666;
+            grid-column: 1 / -1;
         }
 
         .no-guides-icon {
-            font-size: 48px;
-            margin-bottom: 15px;
+            font-size: 64px;
+            margin-bottom: 20px;
             color: #333;
+        }
+
+        .no-guides-text {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .upload-in-empty {
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .upload-in-empty:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(25, 118, 210, 0.4);
         }
 
         /* 달력 섹션 */
@@ -242,7 +265,7 @@
         }
 
         .calendar-title {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 600;
             color: #1976d2;
         }
@@ -271,6 +294,8 @@
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 8px;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .calendar-day {
@@ -337,17 +362,19 @@
         }
 
         .selected-date-title {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 600;
             color: #1976d2;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .selected-guides-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         /* 업로드 모달 */
@@ -374,7 +401,7 @@
             border-radius: 12px;
             padding: 30px;
             width: 90%;
-            max-width: 700px;
+            max-width: 800px;
             max-height: 90vh;
             overflow-y: auto;
         }
@@ -387,7 +414,7 @@
         }
 
         .upload-title {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 600;
             color: #1976d2;
         }
@@ -396,11 +423,11 @@
             background: transparent;
             border: none;
             color: #666;
-            font-size: 24px;
+            font-size: 28px;
             cursor: pointer;
             padding: 0;
-            width: 30px;
-            height: 30px;
+            width: 35px;
+            height: 35px;
         }
 
         .close-upload:hover {
@@ -418,35 +445,35 @@
 
         .help-steps {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 15px;
         }
 
         .help-step {
             display: flex;
             align-items: center;
-            padding: 12px;
+            padding: 15px;
             background: #1a1a1a;
             border-radius: 6px;
             border: 1px solid #333;
         }
 
         .step-icon {
-            font-size: 20px;
-            margin-right: 12px;
-            min-width: 35px;
+            font-size: 24px;
+            margin-right: 15px;
+            min-width: 40px;
         }
 
         .step-text {
             color: #fff;
-            font-size: 14px;
+            font-size: 15px;
             line-height: 1.4;
         }
 
         .drop-zone {
             border: 2px dashed #333;
             border-radius: 8px;
-            padding: 40px 20px;
+            padding: 50px 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
@@ -468,27 +495,28 @@
         }
 
         .drop-icon {
-            font-size: 48px;
-            margin-bottom: 10px;
+            font-size: 56px;
+            margin-bottom: 15px;
             color: #1976d2;
         }
 
         .drop-text {
             color: #666;
-            font-size: 14px;
+            font-size: 16px;
+            line-height: 1.5;
         }
 
         .file-list {
-            max-height: 200px;
+            max-height: 250px;
             overflow-y: auto;
             margin-bottom: 20px;
         }
 
         .file-item {
             background: #1a1a1a;
-            padding: 12px;
+            padding: 15px;
             border-radius: 6px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -502,12 +530,13 @@
         .file-name {
             color: #1976d2;
             font-weight: 500;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
+            font-size: 15px;
         }
 
         .file-date {
             color: #aaa;
-            font-size: 12px;
+            font-size: 13px;
         }
 
         .file-remove {
@@ -515,27 +544,70 @@
             border: none;
             color: #666;
             cursor: pointer;
-            padding: 4px;
-            font-size: 18px;
+            padding: 6px;
+            font-size: 20px;
         }
 
         .file-remove:hover {
             color: #ff4444;
         }
 
-        .upload-actions {
+        .date-input-section {
+            margin: 25px 0;
+            padding: 20px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+
+        .date-input-label {
+            display: block;
+            margin-bottom: 15px;
+            color: #1976d2;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .date-input-row {
             display: flex;
             gap: 15px;
+            align-items: center;
+        }
+
+        .date-input {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background: #2a2a2a;
+            color: #fff;
+            width: 100px;
+            font-size: 15px;
+        }
+
+        .date-input:focus {
+            border-color: #1976d2;
+            outline: none;
+        }
+
+        .date-label {
+            color: #666;
+            font-size: 15px;
+        }
+
+        .upload-actions {
+            display: flex;
+            gap: 20px;
         }
 
         .btn {
             flex: 1;
-            padding: 12px;
+            padding: 15px;
             border: none;
             border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
+            font-size: 16px;
         }
 
         .btn-primary {
@@ -593,14 +665,14 @@
 
         .viewer-close {
             position: absolute;
-            top: -50px;
+            top: -60px;
             right: 0;
             background: rgba(25, 118, 210, 0.2);
             border: none;
             color: #1976d2;
-            font-size: 32px;
+            font-size: 36px;
             cursor: pointer;
-            padding: 8px 12px;
+            padding: 10px 15px;
             border-radius: 6px;
             transition: background 0.2s;
         }
@@ -616,9 +688,9 @@
             background: rgba(25, 118, 210, 0.2);
             border: none;
             color: #1976d2;
-            font-size: 24px;
+            font-size: 28px;
             cursor: pointer;
-            padding: 15px 20px;
+            padding: 20px 25px;
             border-radius: 6px;
             transition: background 0.2s;
         }
@@ -637,14 +709,15 @@
 
         .message {
             position: fixed;
-            top: 100px;
+            top: 120px;
             right: 20px;
-            padding: 15px 25px;
+            padding: 18px 30px;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 15px;
             z-index: 3000;
             animation: slideIn 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
         }
 
         @keyframes slideIn {
@@ -668,6 +741,37 @@
             color: #fff;
         }
 
+        /* FullHD 해상도 최적화 */
+        @media (min-width: 1400px) {
+            .main-container {
+                max-width: 1600px;
+                padding: 50px 40px;
+            }
+            
+            .today-guides {
+                grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+                gap: 30px;
+                max-width: 1400px;
+            }
+            
+            .selected-guides-grid {
+                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+                gap: 30px;
+                max-width: 1400px;
+            }
+            
+            .calendar-grid {
+                max-width: 900px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .today-guides {
+                grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+                gap: 20px;
+            }
+        }
+
         @media (max-width: 768px) {
             .today-guides, .selected-guides-grid {
                 grid-template-columns: 1fr;
@@ -679,7 +783,7 @@
             }
             
             .upload-trigger, .date-trigger {
-                padding: 8px 16px;
+                padding: 10px 20px;
                 font-size: 14px;
             }
 
@@ -691,6 +795,28 @@
                 width: 95%;
                 max-width: none;
                 padding: 20px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .section-tabs {
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+
+            .tab-button {
+                width: 200px;
+            }
+
+            .date-input-row {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
             }
         }
     </style>
@@ -712,16 +838,23 @@
             ⚠️ 당일 가이드가 아닙니다. 안내에 유의해 주세요.
         </div>
 
-        <!-- 오늘의 견적서 -->
+        <!-- 메인 섹션 -->
         <div class="today-section">
             <div class="today-date" id="todayDate">2025년 8월 19일</div>
             <div class="kst-time" id="kstTime">KST 기준</div>
-            <div class="today-subtitle">당일 가이드</div>
+            <div class="today-subtitle" id="todaySubtitle">당일 가이드</div>
+            
+            <!-- 섹션 탭 -->
+            <div class="section-tabs">
+                <button class="tab-button active" id="policyTab">정책가이드</button>
+                <button class="tab-button" id="simTab">유심가이드</button>
+            </div>
             
             <div class="today-guides" id="todayGuides">
                 <div class="no-guides">
                     <div class="no-guides-icon">📊</div>
-                    <div>오늘 등록된 가이드가 없습니다</div>
+                    <div class="no-guides-text">오늘 등록된 가이드가 없습니다</div>
+                    <button class="upload-in-empty" id="uploadInEmpty">+ 가이드 업로드</button>
                 </div>
             </div>
         </div>
@@ -746,11 +879,11 @@
         </div>
     </div>
 
-    <!-- 업로드 모달 -->
+    <!-- 정책가이드 업로드 모달 -->
     <div class="upload-modal" id="uploadModal">
         <div class="upload-content">
             <div class="upload-header">
-                <div class="upload-title">📊 가이드 업로드</div>
+                <div class="upload-title">📊 정책가이드 업로드</div>
                 <button class="close-upload" id="closeUpload">&times;</button>
             </div>
 
@@ -797,6 +930,43 @@
         </div>
     </div>
 
+    <!-- 유심가이드 업로드 모달 -->
+    <div class="upload-modal" id="uploadSimModal">
+        <div class="upload-content">
+            <div class="upload-header">
+                <div class="upload-title">📱 유심가이드 업로드</div>
+                <button class="close-upload" id="closeSimUpload">&times;</button>
+            </div>
+
+            <div class="drop-zone" id="simDropZone">
+                <input type="file" id="simFileInput" accept=".png,.jpg,.jpeg">
+                <div class="drop-icon">📱</div>
+                <div class="drop-text">
+                    유심가이드 파일을 드래그하거나 클릭하세요<br>
+                    <small>단일 파일만 업로드 가능합니다</small>
+                </div>
+            </div>
+
+            <div class="file-list" id="simFileList"></div>
+
+            <!-- 날짜 입력 섹션 -->
+            <div class="date-input-section">
+                <label class="date-input-label">날짜 입력</label>
+                <div class="date-input-row">
+                    <input type="number" class="date-input" id="simMonth" placeholder="월" min="1" max="12">
+                    <span class="date-label">월</span>
+                    <input type="number" class="date-input" id="simDay" placeholder="일" min="1" max="31">
+                    <span class="date-label">일</span>
+                </div>
+            </div>
+
+            <div class="upload-actions">
+                <button class="btn btn-secondary" id="cancelSimUpload">취소</button>
+                <button class="btn btn-primary" id="confirmSimUpload" disabled>업로드</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 이미지 뷰어 모달 -->
     <div class="viewer-modal" id="viewerModal">
         <div class="viewer-content">
@@ -816,11 +986,14 @@
 
         // 전역 변수
         let selectedFiles = [];
+        let selectedSimFile = null;
         let allGuides = [];
+        let allSimGuides = [];
         let currentViewDate = new Date();
         let currentImageIndex = 0;
         let currentViewImages = [];
         let isCalendarVisible = false;
+        let currentSection = 'policy'; // 'policy' 또는 'sim'
 
         // KST 기준 날짜 함수들
         function getKSTDate() {
@@ -863,24 +1036,23 @@
             // 데이터베이스 초기화 확인
             const dbReady = await initDatabase();
             if (!dbReady) {
-                // 데이터베이스가 준비되지 않은 경우에도 UI는 표시
                 updateTodayDate();
                 document.getElementById('todayGuides').innerHTML = `
                     <div class="no-guides">
                         <div class="no-guides-icon">⚠️</div>
-                        <div>데이터베이스 설정이 필요합니다</div>
+                        <div class="no-guides-text">데이터베이스 설정이 필요합니다</div>
                     </div>
                 `;
                 return;
             }
             
             await loadGuides();
+            await loadSimGuides();
             updateTodayDate();
-            showTodayGuides();
+            showCurrentSection();
             updateCalendar();
             
-            // 초기 상태 로그
-            console.log(`📊 초기화 완료: ${allGuides.length}개 가이드 로드됨`);
+            console.log(`📊 초기화 완료: ${allGuides.length}개 정책가이드, ${allSimGuides.length}개 유심가이드 로드됨`);
         }
 
         // 이벤트 리스너 설정
@@ -888,13 +1060,23 @@
             // 헤더 버튼들
             document.getElementById('dateTrigger').addEventListener('click', toggleCalendar);
             document.getElementById('uploadTrigger').addEventListener('click', openUploadModal);
+            document.getElementById('uploadInEmpty').addEventListener('click', openUploadModal);
             
-            // 업로드 모달
+            // 탭 버튼들
+            document.getElementById('policyTab').addEventListener('click', () => switchSection('policy'));
+            document.getElementById('simTab').addEventListener('click', () => switchSection('sim'));
+            
+            // 정책가이드 업로드 모달
             document.getElementById('closeUpload').addEventListener('click', closeUploadModal);
             document.getElementById('cancelUpload').addEventListener('click', closeUploadModal);
             document.getElementById('confirmUpload').addEventListener('click', uploadGuides);
 
-            // 파일 드롭존
+            // 유심가이드 업로드 모달
+            document.getElementById('closeSimUpload').addEventListener('click', closeSimUploadModal);
+            document.getElementById('cancelSimUpload').addEventListener('click', closeSimUploadModal);
+            document.getElementById('confirmSimUpload').addEventListener('click', uploadSimGuide);
+
+            // 정책가이드 파일 드롭존
             const dropZone = document.getElementById('dropZone');
             const fileInput = document.getElementById('fileInput');
 
@@ -915,6 +1097,32 @@
             fileInput.addEventListener('change', (e) => {
                 handleFiles(e.target.files);
             });
+
+            // 유심가이드 파일 드롭존
+            const simDropZone = document.getElementById('simDropZone');
+            const simFileInput = document.getElementById('simFileInput');
+
+            simDropZone.addEventListener('click', () => simFileInput.click());
+            simDropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                simDropZone.classList.add('active');
+            });
+            simDropZone.addEventListener('dragleave', () => {
+                simDropZone.classList.remove('active');
+            });
+            simDropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                simDropZone.classList.remove('active');
+                handleSimFile(e.dataTransfer.files);
+            });
+
+            simFileInput.addEventListener('change', (e) => {
+                handleSimFile(e.target.files);
+            });
+
+            // 유심가이드 날짜 입력 이벤트
+            document.getElementById('simMonth').addEventListener('input', checkSimUploadReady);
+            document.getElementById('simDay').addEventListener('input', checkSimUploadReady);
 
             // 달력 네비게이션
             document.getElementById('prevMonth').addEventListener('click', () => {
@@ -945,8 +1153,45 @@
             });
         }
 
+        // 섹션 전환
+        function switchSection(section) {
+            currentSection = section;
+            
+            // 탭 버튼 업데이트
+            document.getElementById('policyTab').classList.toggle('active', section === 'policy');
+            document.getElementById('simTab').classList.toggle('active', section === 'sim');
+            
+            // 달력 표시/숨김 (유심가이드에서는 달력 숨김)
+            const dateTrigger = document.getElementById('dateTrigger');
+            if (section === 'sim') {
+                dateTrigger.style.display = 'none';
+                document.getElementById('calendarSection').classList.remove('active');
+                document.getElementById('selectedDateGuides').classList.remove('active');
+                isCalendarVisible = false;
+            } else {
+                dateTrigger.style.display = 'inline-block';
+            }
+            
+            showCurrentSection();
+        }
+
+        // 현재 섹션 표시
+        function showCurrentSection() {
+            const subtitleEl = document.getElementById('todaySubtitle');
+            
+            if (currentSection === 'sim') {
+                subtitleEl.textContent = '최신 유심가이드';
+                showSimGuides();
+            } else {
+                subtitleEl.textContent = '당일 가이드';
+                showTodayGuides();
+            }
+        }
+
         // 달력 토글
         function toggleCalendar() {
+            if (currentSection === 'sim') return; // 유심가이드에서는 달력 비활성화
+            
             const calendarSection = document.getElementById('calendarSection');
             const selectedDateGuides = document.getElementById('selectedDateGuides');
             const dateTrigger = document.getElementById('dateTrigger');
@@ -1004,7 +1249,7 @@
             return { year, month, day };
         }
 
-        // 파일 처리
+        // 정책가이드 파일 처리
         function handleFiles(files) {
             selectedFiles = [];
             
@@ -1022,7 +1267,7 @@
             checkUploadReady();
         }
 
-        // 파일 목록 표시
+        // 정책가이드 파일 목록 표시
         function displayFileList() {
             const fileList = document.getElementById('fileList');
             
@@ -1048,25 +1293,78 @@
             }).join('');
         }
 
-        // 파일 제거
+        // 정책가이드 파일 제거
         window.removeFile = function(index) {
             selectedFiles.splice(index, 1);
             displayFileList();
             checkUploadReady();
         }
 
-        // 업로드 가능 상태 체크
+        // 정책가이드 업로드 가능 상태 체크
         function checkUploadReady() {
             const hasValidFiles = selectedFiles.some(item => item.dateInfo !== null);
             document.getElementById('confirmUpload').disabled = !hasValidFiles;
         }
 
-        // 업로드 모달 열기
-        function openUploadModal() {
-            document.getElementById('uploadModal').classList.add('active');
+        // 유심가이드 파일 처리
+        function handleSimFile(files) {
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type === 'image/png' || file.type === 'image/jpeg') {
+                    selectedSimFile = file;
+                    displaySimFileList();
+                    checkSimUploadReady();
+                }
+            }
         }
 
-        // 업로드 모달 닫기
+        // 유심가이드 파일 목록 표시
+        function displaySimFileList() {
+            const simFileList = document.getElementById('simFileList');
+            
+            if (!selectedSimFile) {
+                simFileList.innerHTML = '';
+                return;
+            }
+
+            simFileList.innerHTML = `
+                <div class="file-item">
+                    <div class="file-details">
+                        <div class="file-name">${selectedSimFile.name}</div>
+                        <div class="file-date">유심가이드 파일</div>
+                    </div>
+                    <button class="file-remove" onclick="removeSimFile()">✕</button>
+                </div>
+            `;
+        }
+
+        // 유심가이드 파일 제거
+        window.removeSimFile = function() {
+            selectedSimFile = null;
+            displaySimFileList();
+            checkSimUploadReady();
+        }
+
+        // 유심가이드 업로드 가능 상태 체크
+        function checkSimUploadReady() {
+            const month = document.getElementById('simMonth').value;
+            const day = document.getElementById('simDay').value;
+            const hasFile = selectedSimFile !== null;
+            const hasDate = month && day && month >= 1 && month <= 12 && day >= 1 && day <= 31;
+            
+            document.getElementById('confirmSimUpload').disabled = !(hasFile && hasDate);
+        }
+
+        // 업로드 모달 열기
+        function openUploadModal() {
+            if (currentSection === 'sim') {
+                document.getElementById('uploadSimModal').classList.add('active');
+            } else {
+                document.getElementById('uploadModal').classList.add('active');
+            }
+        }
+
+        // 정책가이드 업로드 모달 닫기
         function closeUploadModal() {
             document.getElementById('uploadModal').classList.remove('active');
             selectedFiles = [];
@@ -1074,7 +1372,18 @@
             document.getElementById('fileInput').value = '';
         }
 
-        // 가이드 업로드
+        // 유심가이드 업로드 모달 닫기
+        function closeSimUploadModal() {
+            document.getElementById('uploadSimModal').classList.remove('active');
+            selectedSimFile = null;
+            displaySimFileList();
+            document.getElementById('simFileInput').value = '';
+            document.getElementById('simMonth').value = '';
+            document.getElementById('simDay').value = '';
+            checkSimUploadReady();
+        }
+
+        // 정책가이드 업로드
         async function uploadGuides() {
             const validFiles = selectedFiles.filter(item => item.dateInfo !== null);
             if (validFiles.length === 0) return;
@@ -1092,9 +1401,7 @@
                     const timestamp = Date.now();
                     const fileName = `${dateInfo.month}_${dateInfo.day}_${timestamp}_${file.name}`;
 
-                    console.log('📁 파일 업로드 시작:', fileName);
-
-                    // 1. Storage에 파일 업로드
+                    // Storage에 파일 업로드
                     const { data: uploadData, error: uploadError } = await supabaseClient.storage
                         .from('guide-images')
                         .upload(fileName, file);
@@ -1105,16 +1412,12 @@
                         continue;
                     }
 
-                    console.log('✅ Storage 업로드 성공:', uploadData);
-
-                    // 2. 공개 URL 가져오기
+                    // 공개 URL 가져오기
                     const { data: { publicUrl } } = supabaseClient.storage
                         .from('guide-images')
                         .getPublicUrl(fileName);
 
-                    console.log('🔗 Public URL:', publicUrl);
-
-                    // 3. 데이터베이스에 레코드 저장
+                    // 데이터베이스에 레코드 저장
                     const insertData = {
                         year: dateInfo.year,
                         month: dateInfo.month,
@@ -1123,8 +1426,6 @@
                         image_url: publicUrl
                     };
 
-                    console.log('💾 데이터베이스 INSERT 시도:', insertData);
-
                     const { data: dbData, error: dbError } = await supabaseClient
                         .from('guides')
                         .insert(insertData)
@@ -1132,10 +1433,6 @@
 
                     if (dbError) {
                         console.error('❌ 데이터베이스 오류:', dbError);
-                        console.error('오류 코드:', dbError.code);
-                        console.error('오류 메시지:', dbError.message);
-                        console.error('오류 세부사항:', dbError.details);
-                        console.error('오류 힌트:', dbError.hint);
                         
                         // Storage에서 업로드된 파일 삭제 (정리)
                         await supabaseClient.storage
@@ -1143,19 +1440,9 @@
                             .remove([fileName]);
                         
                         errorCount++;
-                        
-                        // 구체적인 오류 메시지 표시
-                        if (dbError.code === 'PGRST116') {
-                            showMessage('guides 테이블이 존재하지 않습니다. Supabase에서 테이블을 생성해주세요.', 'error');
-                        } else if (dbError.code === '42501') {
-                            showMessage('데이터베이스 권한이 없습니다. RLS 정책을 확인해주세요.', 'error');
-                        } else {
-                            showMessage(`데이터베이스 오류: ${dbError.message}`, 'error');
-                        }
                         continue;
                     }
 
-                    console.log('✅ 데이터베이스 저장 성공:', dbData);
                     successCount++;
                 }
 
@@ -1164,16 +1451,12 @@
                     showMessage(`${successCount}개 가이드가 업로드되었습니다.`, 'success');
                     closeUploadModal();
                     await loadGuides();
-                    showTodayGuides();
+                    showCurrentSection();
                     updateCalendar();
                 } 
                 
                 if (errorCount > 0) {
                     showMessage(`${errorCount}개 파일 업로드 실패`, 'error');
-                }
-                
-                if (successCount === 0 && errorCount === 0) {
-                    showMessage('업로드할 파일이 없습니다.', 'error');
                 }
                 
             } catch (error) {
@@ -1186,11 +1469,88 @@
             }
         }
 
-        // 가이드 목록 로드
+        // 유심가이드 업로드
+        async function uploadSimGuide() {
+            if (!selectedSimFile) return;
+
+            const month = parseInt(document.getElementById('simMonth').value);
+            const day = parseInt(document.getElementById('simDay').value);
+            
+            if (!month || !day) return;
+
+            const confirmBtn = document.getElementById('confirmSimUpload');
+            confirmBtn.disabled = true;
+            confirmBtn.textContent = '업로드 중...';
+
+            try {
+                const timestamp = Date.now();
+                const fileName = `sim_${month}_${day}_${timestamp}_${selectedSimFile.name}`;
+
+                // Storage에 파일 업로드
+                const { data: uploadData, error: uploadError } = await supabaseClient.storage
+                    .from('guide-images')
+                    .upload(fileName, selectedSimFile);
+
+                if (uploadError) {
+                    console.error('❌ Storage 업로드 오류:', uploadError);
+                    showMessage('파일 업로드에 실패했습니다.', 'error');
+                    return;
+                }
+
+                // 공개 URL 가져오기
+                const { data: { publicUrl } } = supabaseClient.storage
+                    .from('guide-images')
+                    .getPublicUrl(fileName);
+
+                // 데이터베이스에 레코드 저장
+                const insertData = {
+                    month: month,
+                    day: day,
+                    title: `${month}월 ${day}일 유심가이드`,
+                    image_url: publicUrl
+                };
+
+                const { data: dbData, error: dbError } = await supabaseClient
+                    .from('sim_guides')
+                    .insert(insertData)
+                    .select();
+
+                if (dbError) {
+                    console.error('❌ 데이터베이스 오류:', dbError);
+                    
+                    // Storage에서 업로드된 파일 삭제 (정리)
+                    await supabaseClient.storage
+                        .from('guide-images')
+                        .remove([fileName]);
+                    
+                    if (dbError.code === 'PGRST116') {
+                        showMessage('sim_guides 테이블이 존재하지 않습니다. Supabase에서 테이블을 생성해주세요.', 'error');
+                    } else {
+                        showMessage(`데이터베이스 오류: ${dbError.message}`, 'error');
+                    }
+                    return;
+                }
+
+                showMessage('유심가이드가 업로드되었습니다.', 'success');
+                closeSimUploadModal();
+                await loadSimGuides();
+                if (currentSection === 'sim') {
+                    showCurrentSection();
+                }
+                
+            } catch (error) {
+                console.error('❌ 유심가이드 업로드 프로세스 오류:', error);
+                showMessage('업로드 중 오류가 발생했습니다.', 'error');
+            } finally {
+                confirmBtn.disabled = false;
+                confirmBtn.textContent = '업로드';
+                checkSimUploadReady();
+            }
+        }
+
+        // 정책가이드 목록 로드
         async function loadGuides() {
             try {
-                console.log('📋 데이터베이스에서 가이드 목록 로드 시도...');
-                
                 const { data, error } = await supabaseClient
                     .from('guides')
                     .select('*')
@@ -1201,35 +1561,52 @@
 
                 if (error) {
                     console.error('❌ 데이터베이스 로드 오류:', error);
-                    console.error('오류 코드:', error.code);
-                    console.error('오류 메시지:', error.message);
-                    
-                    if (error.code === 'PGRST116') {
-                        showMessage('guides 테이블이 존재하지 않습니다.', 'error');
-                    } else if (error.code === '42501') {
-                        showMessage('데이터베이스 접근 권한이 없습니다.', 'error');
-                    } else {
-                        showMessage(`데이터 로드 오류: ${error.message}`, 'error');
-                    }
-                    
                     allGuides = [];
                     return;
                 }
 
                 allGuides = data || [];
-                console.log(`✅ 총 ${allGuides.length}개 가이드 로드 완료`);
+                console.log(`✅ 총 ${allGuides.length}개 정책가이드 로드 완료`);
                 
             } catch (error) {
                 console.error('❌ 전체 로드 프로세스 오류:', error);
-                showMessage('가이드 로드 중 오류가 발생했습니다.', 'error');
                 allGuides = [];
             }
         }
 
+        // 유심가이드 목록 로드
+        async function loadSimGuides() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('sim_guides')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error('❌ 유심가이드 로드 오류:', error);
+                    allSimGuides = [];
+                    return;
+                }
+
+                allSimGuides = data || [];
+                console.log(`✅ 총 ${allSimGuides.length}개 유심가이드 로드 완료`);
+                
+            } catch (error) {
+                console.error('❌ 유심가이드 로드 프로세스 오류:', error);
+                allSimGuides = [];
+            }
+        }
+
         // 가이드 날짜 확인 및 경고 표시
-        function checkDateWarning(guides) {
+        function checkDateWarning(guides, isSimGuide = false) {
             const today = getKSTDate();
             const warningEl = document.getElementById('dateWarning');
+            
+            if (isSimGuide) {
+                // 유심가이드는 날짜 경고 없음
+                warningEl.classList.remove('show');
+                return;
+            }
             
             // 당일이 아닌 가이드가 있는지 확인
             const hasNonTodayGuides = guides.some(guide => {
@@ -1244,7 +1621,7 @@
             }
         }
 
-        // 오늘의 가이드 표시 (최신순으로 정렬, 날짜 확인)
+        // 정책가이드 표시 (최신순으로 정렬, 날짜 확인)
         function showTodayGuides() {
             const today = getKSTDate();
             let todayGuides = allGuides.filter(guide => 
@@ -1255,7 +1632,6 @@
             
             // 당일 가이드가 없으면 가장 최근 가이드 하나를 표시
             if (todayGuides.length === 0) {
-                // 최근 1개 가이드를 표시
                 todayGuides = allGuides.slice(0, 1);
             }
             
@@ -1265,28 +1641,60 @@
                 todayGuidesEl.innerHTML = `
                     <div class="no-guides">
                         <div class="no-guides-icon">📊</div>
-                        <div>등록된 가이드가 없습니다</div>
+                        <div class="no-guides-text">등록된 가이드가 없습니다</div>
+                        <button class="upload-in-empty" onclick="openUploadModal()">+ 가이드 업로드</button>
                     </div>
                 `;
                 return;
             }
 
             // 날짜 경고 확인
-            checkDateWarning(todayGuides);
+            checkDateWarning(todayGuides, false);
 
             todayGuidesEl.innerHTML = todayGuides.map((guide, index) => {
                 const guideDate = getGuideDate(guide);
+                const today = getKSTDate();
                 const isToday = isSameDate(guideDate, today);
                 const dateText = `${guide.month}/${guide.day}`;
                 const badgeClass = isToday ? '' : 'old';
                 
                 return `
-                    <div class="guide-image" onclick="openViewer([${todayGuides.map(g => allGuides.indexOf(g)).join(',')}], ${index})">
+                    <div class="guide-image" onclick="openViewer([${todayGuides.map(g => allGuides.indexOf(g)).join(',')}], ${index}, 'policy')">
                         <img src="${guide.image_url}" alt="${guide.title}" loading="lazy">
                         <div class="guide-date-badge ${badgeClass}">${dateText}</div>
                     </div>
                 `;
             }).join('');
+        }
+
+        // 유심가이드 표시
+        function showSimGuides() {
+            const simGuidesEl = document.getElementById('todayGuides');
+            
+            if (allSimGuides.length === 0) {
+                simGuidesEl.innerHTML = `
+                    <div class="no-guides">
+                        <div class="no-guides-icon">📱</div>
+                        <div class="no-guides-text">등록된 유심가이드가 없습니다</div>
+                        <button class="upload-in-empty" onclick="openUploadModal()">+ 유심가이드 업로드</button>
+                    </div>
+                `;
+                return;
+            }
+
+            // 날짜 경고 숨김 (유심가이드는 날짜 경고 없음)
+            checkDateWarning([], true);
+
+            // 최신 유심가이드 하나만 표시
+            const latestSimGuide = allSimGuides[0];
+            const dateText = `${latestSimGuide.month}/${latestSimGuide.day}`;
+            
+            simGuidesEl.innerHTML = `
+                <div class="guide-image" onclick="openViewer([0], 0, 'sim')">
+                    <img src="${latestSimGuide.image_url}" alt="${latestSimGuide.title}" loading="lazy">
+                    <div class="guide-date-badge">${dateText}</div>
+                </div>
+            `;
         }
 
         // 캘린더 업데이트 (KST 기준)
@@ -1376,7 +1784,7 @@
                 const badgeClass = isSelectedToday ? '' : 'old';
                 
                 return `
-                    <div class="guide-image" onclick="openViewer([${selectedGuides.map(g => allGuides.indexOf(g)).join(',')}], ${index})">
+                    <div class="guide-image" onclick="openViewer([${selectedGuides.map(g => allGuides.indexOf(g)).join(',')}], ${index}, 'policy')">
                         <img src="${guide.image_url}" alt="${guide.title}" loading="lazy">
                         <div class="guide-date-badge ${badgeClass}">${dateText}</div>
                     </div>
@@ -1387,10 +1795,17 @@
         }
 
         // 뷰어 열기
-        window.openViewer = function(imageIndices, startIndex = 0) {
+        window.openViewer = function(imageIndices, startIndex = 0, type = 'policy') {
             currentViewImages = imageIndices;
             currentImageIndex = startIndex;
-            const guide = allGuides[imageIndices[startIndex]];
+            
+            let guide;
+            if (type === 'sim') {
+                guide = allSimGuides[imageIndices[startIndex]];
+            } else {
+                guide = allGuides[imageIndices[startIndex]];
+            }
+            
             document.getElementById('viewerImage').src = guide.image_url;
             document.getElementById('viewerModal').classList.add('active');
             updateViewerNav();
@@ -1405,7 +1820,12 @@
         function showPrevImage() {
             if (currentImageIndex > 0) {
                 currentImageIndex--;
-                const guide = allGuides[currentViewImages[currentImageIndex]];
+                let guide;
+                if (currentSection === 'sim') {
+                    guide = allSimGuides[currentViewImages[currentImageIndex]];
+                } else {
+                    guide = allGuides[currentViewImages[currentImageIndex]];
+                }
                 document.getElementById('viewerImage').src = guide.image_url;
                 updateViewerNav();
             }
@@ -1415,7 +1835,12 @@
         function showNextImage() {
             if (currentImageIndex < currentViewImages.length - 1) {
                 currentImageIndex++;
-                const guide = allGuides[currentViewImages[currentImageIndex]];
+                let guide;
+                if (currentSection === 'sim') {
+                    guide = allSimGuides[currentViewImages[currentImageIndex]];
+                } else {
+                    guide = allGuides[currentViewImages[currentImageIndex]];
+                }
                 document.getElementById('viewerImage').src = guide.image_url;
                 updateViewerNav();
             }
@@ -1427,12 +1852,6 @@
                 currentImageIndex > 0 ? 'block' : 'none';
             document.getElementById('viewerNext').style.display = 
                 currentImageIndex < currentViewImages.length - 1 ? 'block' : 'none';
-        }
-
-        // 가이드 삭제 (비활성화됨)
-        window.deleteGuide = function(id, event) {
-            // 삭제 기능이 비활성화되었습니다
-            return;
         }
 
         // 메시지 표시
@@ -1452,14 +1871,14 @@
             try {
                 console.log('🔧 데이터베이스 연결 확인 중...');
                 
-                // 먼저 테이블이 존재하는지 확인
+                // guides 테이블 확인
                 const { data: tables, error: tablesError } = await supabaseClient
                     .from('guides')
                     .select('*')
                     .limit(1);
 
                 if (tablesError) {
-                    console.error('❌ 테이블 확인 오류:', tablesError);
+                    console.error('❌ guides 테이블 확인 오류:', tablesError);
                     
                     if (tablesError.code === 'PGRST116') {
                         console.log('📋 guides 테이블이 존재하지 않습니다.');
@@ -1477,6 +1896,22 @@
                 }
                 
                 console.log('✅ guides 테이블 연결 성공');
+
+                // sim_guides 테이블 확인
+                const { data: simTables, error: simTablesError } = await supabaseClient
+                    .from('sim_guides')
+                    .select('*')
+                    .limit(1);
+
+                if (simTablesError) {
+                    console.error('❌ sim_guides 테이블 확인 오류:', simTablesError);
+                    
+                    if (simTablesError.code === 'PGRST116') {
+                        console.log('📱 sim_guides 테이블이 존재하지 않습니다.');
+                    }
+                } else {
+                    console.log('✅ sim_guides 테이블 연결 성공');
+                }
                 
                 // Storage 버킷 확인
                 const { data: buckets, error: bucketsError } = await supabaseClient.storage.listBuckets();
@@ -1515,10 +1950,18 @@
    - image_url: text
    - created_at: timestamptz (default: now())
 
-🔐 2. Authentication > Policies:
+📱 2. Table Editor에서 'sim_guides' 테이블 생성:
+   - id: uuid (PK, default: gen_random_uuid())
+   - month: int4 (required)
+   - day: int4 (required)  
+   - title: text (required)
+   - image_url: text
+   - created_at: timestamptz (default: now())
+
+🔐 3. Authentication > Policies:
    - RLS 비활성화 또는 모든 작업 허용 정책 설정
 
-📁 3. Storage에서 'guide-images' 버킷 생성:
+📁 4. Storage에서 'guide-images' 버킷 생성:
    - Public bucket 체크
    - 이미지 파일 업로드 허용
 
