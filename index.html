@@ -1768,25 +1768,13 @@
             
             selectedDateTitle.textContent = `${year}년 ${month}월 ${day}일 가이드`;
             
-            // 선택된 날짜의 가이드들에 대한 날짜 경고 확인
-            const today = getKSTDate();
-            const selectedDate = new Date(year, month - 1, day);
-            const isSelectedToday = isSameDate(selectedDate, today);
-            
-            if (!isSelectedToday) {
-                document.getElementById('dateWarning').classList.add('show');
-            } else {
-                document.getElementById('dateWarning').classList.remove('show');
-            }
-            
             selectedGuidesGrid.innerHTML = selectedGuides.map((guide, index) => {
                 const dateText = `${guide.month}/${guide.day}`;
-                const badgeClass = isSelectedToday ? '' : 'old';
                 
                 return `
                     <div class="guide-image" onclick="openViewer([${selectedGuides.map(g => allGuides.indexOf(g)).join(',')}], ${index}, 'policy')">
                         <img src="${guide.image_url}" alt="${guide.title}" loading="lazy">
-                        <div class="guide-date-badge ${badgeClass}">${dateText}</div>
+                        <div class="guide-date-badge">${dateText}</div>
                     </div>
                 `;
             }).join('');
